@@ -1,0 +1,6 @@
+numpy
+matplotlib
+pyserial
+keyboard
+PySide6
+pyqtgraph
