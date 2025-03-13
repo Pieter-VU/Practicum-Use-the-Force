@@ -2,6 +2,7 @@ import sys
 from time import perf_counter_ns, sleep
 from PySide6 import QtWidgets
 from PySide6.QtCore import Slot, Signal, QTimer
+from PySide6.QtGui import QCloseEvent
 import pyqtgraph as pg
 import threading
 
@@ -39,7 +40,14 @@ class UserInterface(QtWidgets.QMainWindow):
         self.plot_timer.timeout.connect(self.updatePlot)
         self.plot_timer.start(100)
 
-        
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        if self.recording:
+            if self.ui.butFile.text()!="-":
+                self.startMainLog.join()
+            else:
+                self.startMainLogLess.join()
+        # return super().closeEvent(event) 
 
     def plot(self, data: list | None = None, **kwargs) -> None:
         """
@@ -486,4 +494,5 @@ def main():
     app = QtWidgets.QApplication(sys.argv)
     ui = UserInterface()
     ui.show()
-    sys.exit(app.exec())
+    ret = app.exec_()
+    sys.exit(ret)
