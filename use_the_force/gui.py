@@ -43,6 +43,7 @@ class UserInterface(QtWidgets.QMainWindow):
 
     def closeEvent(self, event: QCloseEvent) -> None:
         if self.recording:
+            self.recording = False
             if self.ui.butFile.text()!="-":
                 self.startMainLog.join()
             else:
