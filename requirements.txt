@@ -1,6 +1,6 @@
 numpy
 matplotlib
 pyserial
-keyboard
+# keyboard
 PySide6
 pyqtgraph

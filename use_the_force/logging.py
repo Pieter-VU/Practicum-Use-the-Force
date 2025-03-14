@@ -91,7 +91,7 @@ class Logging():
 
     ### ===READ LOG===###
 
-    def readLog(self, *, filename: str | None = None) -> list[float, float]:
+    def readLog(self, *, filename: str | None = None) -> list[list[float], list[float]]:
         if filename == None:
             filename == self.filename
         

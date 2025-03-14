@@ -5,7 +5,7 @@ from PySide6.QtCore import Slot, Signal, QTimer
 from PySide6.QtGui import QCloseEvent
 import pyqtgraph as pg
 import threading
-
+import bisect
 from .main_ui import Ui_MainWindow
 from .error_ui import Ui_errorWindow
 
@@ -21,6 +21,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
         
         self.measurementLog = None
+        self.butConnectPressed = False
 
         self.ui.error = self.error
 
@@ -30,6 +31,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butRecord.pressed.connect(self.butRecord)
         self.ui.butClear.pressed.connect(self.butClear)
         self.ui.butSave.pressed.connect(self.butSave)
+        self.ui.setNewtonPerCount.textEdited.connect(self.setNewtonPerCount)
 
         self.recording = False
         self.data = [[],[]]
@@ -48,6 +50,8 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.startMainLog.join()
             else:
                 self.startMainLogLess.join()
+        if self.ui.butConnect.isChecked():
+            self.butConnect()
         # return super().closeEvent(event) 
 
     def plot(self, data: list | None = None, **kwargs) -> None:
@@ -127,10 +131,16 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.xLim = float(self.ui.xLimSet.text())
                 if -1*self.xLim < self.data[0][-1] and (self.xLim!=float(0)):
                     self.ui.graph1.setXRange(self.data[0][-1]+self.xLim, self.data[0][-1])
+                    i = bisect.bisect_left(self.data[0], self.data[0][-1]+self.xLim)
+                    self.ui.graph1.setYRange(min(self.data[1][i:]),max(self.data[1][i:]))
+                    
                 elif self.xLim == float(0):
                     self.ui.graph1.setXRange(0, self.data[0][-1])
+                    self.ui.graph1.setYRange(min(self.data[1]),max(self.data[1]))
+
             except:
                 self.ui.graph1.setXRange(0, self.data[0][-1])
+                self.ui.graph1.setYRange(min(self.data[1]),max(self.data[1]))
 
     def updatePlotLabel(self, labelLoc, labelTxt) -> None:
         """
@@ -169,34 +179,51 @@ class UserInterface(QtWidgets.QMainWindow):
                 labelLoc="bottom", labelTxt=self.ui.xLabel.text())
 
     def butConnect(self):
-        if self.ui.butConnect.isChecked():
-            self.ui.butConnect.setChecked(True)
-            self.sensorDisconnect()
-        else:
-            self.ui.butConnect.setChecked(False)
-            self.sensorConnect()
-            self.ui.butConnect.setText("Connect")
+        if not self.butConnectPressed:
+            self.butConnectPressed = True
+            self.ui.butConnect.setEnabled(False)
+            if self.ui.butConnect.isChecked():
+                self.startsensorDisonnect = threading.Thread(target=self.sensorDisconnect)
+                self.startsensorDisonnect.start()
+            else:
+                self.startsensorConnect = threading.Thread(target=self.sensorConnect)
+                self.startsensorConnect.start()
+            
 
     def sensorConnect(self):
         self.ui.butConnect.setText("Connecting...")
         try:
-            self.sensor = ForceSensorGUI(
-                ui = self.ui
-            )
-            self.ui.butConnect.setText("Connected")
+            self.sensor = ForceSensorGUI(ui = self.ui)
+            sleep(0.5)
             self.ui.butReGauge.setEnabled(True)
             self.ui.butRecord.setEnabled(True)
+            self.ui.butConnect.setText("Connected")
             if self.measurementLog == None:
+                self.butClear()
                 self.butRecord()
+            self.butConnectPressed = False
+            self.ui.butConnect.setEnabled(True)
+            self.ui.butConnect.setChecked(True)
 
         except Exception as e:
             self.error(e.__class__, e.args[0])
+            sleep(0.5)
+            self.butConnectPressed = False
             self.ui.butConnect.setText("Connect")
-            self.ui.butConnect.setChecked(True)
+            self.ui.butConnect.setEnabled(True)
+            
     
     def sensorDisconnect(self):
-        self.sensor.ClosePort()
+        if self.recording:
+            self.butRecord()
+        self.ui.butRecord.setEnabled(False)
         self.ui.butReGauge.setEnabled(False)
+        self.sensor.ClosePort()
+        sleep(0.5)
+        self.butConnectPressed = False
+        self.ui.butConnect.setText("Connect")
+        self.ui.butConnect.setEnabled(True)
+        self.ui.butConnect.setChecked(False)
 
     def error(self, errorType, errorText):
         self.ew = ErrorInterface(errorType=errorType, errorText=errorText)
@@ -250,7 +277,10 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.startMainLogLess.start()
                 
     def butClear(self):
-        self.data[0], self.data[1] = [[],[]]
+        del self.data
+        self.data = [[],[]]
+        #self.ui.graph1.setXRange(-0.1, 0.1)
+        #self.ui.graph1.setYRange(-0.1, 0.1)
         self.ui.graph1.clear()
 
     def butReGauge(self):
@@ -294,19 +324,24 @@ class UserInterface(QtWidgets.QMainWindow):
             pass
 
     def mainLog(self):
-        self.data = self.measurementLog.readLog(filename=self.filePath)
+        self.data: list[list] = self.measurementLog.readLog(filename=self.filePath)
         
         if len(self.data[0]) == 0:
-            time = perf_counter_ns()
-            self.sensor.T0 = time
+            time: float = 0.
+            self.sensor.T0 = perf_counter_ns()
         else:
-            time = self.data[0][-1]
-            self.sensor.T0 = perf_counter_ns + time
+            time: float = self.data[0][-1]
+            self.sensor.T0 = perf_counter_ns() - int(time*1e9+0.5)
 
-        measurementTime = float(self.ui.setTime.text())*1e9
+        if float(self.ui.setTime.text()) >= 0. and self.ui.setTime.text() != "-1":
+            measurementTime = float(self.ui.setTime.text())*1e9
+        else:
+            measurementTime = -1*1e9
+            self.ui.setTime.setText("-1")
+
         while (time < measurementTime or measurementTime == -1*1e9) and self.recording:
             # serial ID, time in nanoseconds, force reading from sensor
-            ID, time, measuredForce = self.sensor.GetReading()
+            time, measuredForce = self.sensor.GetReading()
             Force = self.sensor.ForceFix(measuredForce)
             timeS = time/1e9
             self.data[0].append(timeS)
@@ -321,18 +356,21 @@ class UserInterface(QtWidgets.QMainWindow):
 
     def mainLogless(self):
         if len(self.data[0]) == 0:
-            time = perf_counter_ns()
-            self.sensor.T0 = time
+            time: float = 0.
+            self.sensor.T0 = perf_counter_ns()
         else:
-            time = self.data[0][-1]
-            self.sensor.T0 = perf_counter_ns + time
-        # self.sensor.T0 = self.data[0]
-        # time = perf_counter_ns() - self.sensor.T0
+            time: float = self.data[0][-1]
+            self.sensor.T0 = perf_counter_ns() - int(time*1e9+0.5)
 
-        measurementTime = float(self.ui.setTime.text())*1e9
+        if float(self.ui.setTime.text()) >= 0. and self.ui.setTime.text() != "-1":
+            measurementTime = float(self.ui.setTime.text())*1e9
+        else:
+            measurementTime = -1*1e9
+            self.ui.setTime.setText("-1")
+
         while (time < measurementTime or measurementTime == -1*1e9) and self.recording:
             # serial ID, time in nanoseconds, force reading from sensor
-            ID, time, measuredForce = self.sensor.GetReading()
+            time, measuredForce = self.sensor.GetReading()
             Force = self.sensor.ForceFix(measuredForce)
             timeS = time/1e9
             self.data[0].append(timeS)
@@ -342,6 +380,16 @@ class UserInterface(QtWidgets.QMainWindow):
         self.unsavedData = self.data
         if not self.ui.butSave.isEnabled():
             self.ui.butSave.setEnabled(True)
+
+
+    def setNewtonPerCount(self):
+        try:
+            if self.ui.setNewtonPerCount.text() == "-":
+                self.sensor.NewtonPerCount = float(0.)
+            else:
+                self.sensor.NewtonPerCount = float(self.ui.setNewtonPerCount.text())
+        except:
+            pass
 
 
 
@@ -356,10 +404,10 @@ class ForceSensorGUI():
 
         import serial
         self.ui = ui
-        # The 'zero' volt value. Determined automatically each time.
+        # The 'zero' count value. Determined automatically each time.
         self.GaugeValue: int = int(self.ui.setGaugeValue.text())
-        self.NewtonPerVolt: float = float(self.ui.setNewtonPerVolt.text())
-        # self.NewtonPerVolt = 1  # value I set for calibration
+        self.NewtonPerCount: float = float(self.ui.setNewtonPerCount.text())
+        # self.NewtonPerCount = 1  # value I set for calibration
         self.WarningOn: bool = WarningOn  # >MaxNewton is dangerous for sensor.
         self.MaxNewton: int | float = float(self.ui.setMaxNewton.text())
 
@@ -411,8 +459,8 @@ class ForceSensorGUI():
         # !!!IT'S IMPORTANT NOT TO HAVE ANY FORCE ON THE SENSOR WHEN CALLING THIS FUNCTION!!!
         """
         self.ser.reset_input_buffer()
-        skips: list[float] = [self.GetReading()[2] for i in range(3)]
-        reads: list[float] = [self.GetReading()[2] for i in range(10)]
+        skips: list[float] = [self.GetReading()[1] for i in range(3)]
+        reads: list[float] = [self.GetReading()[1] for i in range(10)]
         self.GaugeValue = int(sum(reads)/10)
         self.ui.setGaugeValue.setText(f"{self.GaugeValue}")
         # print("Self-gauged value: " + str(self.GaugeValue))
@@ -430,11 +478,12 @@ class ForceSensorGUI():
         line: str = self.ser.readline().decode(self.encoding)
         self.ser.reset_input_buffer()
         ID, force = line.split(",")
-        return [int(ID), float(perf_counter_ns()-self.T0), float(force)]
+            
+        return [float(perf_counter_ns()-self.T0), float(force)]
 
     def ForceFix(self, x: float) -> float:
         """
-        Calculates the force based on `self.GaugeValue` and self.`NewtonPerVolt`
+        Calculates the force based on `self.GaugeValue` and self.`NewtonPerCount`
 
         :returns: calculated force
         :rtype: float
@@ -446,14 +495,14 @@ class ForceSensorGUI():
         # reading every time.
         # self.ser.reset_input_buffer()
 
-        # Warning if a high value is read (>5 Newton)
+        # Warning if a high value is read (>self.MaxNewton Newton)
         if self.WarningOn:
-            if abs(x * self.NewtonPerVolt) > self.MaxNewton:
+            if abs(x * self.NewtonPerCount) > self.MaxNewton:
                 print("LOAD TOO HIGH FOR SENSOR")
                 print("ABORT TO AVOID SENSOR DAMAGE")
 
         # The output, with gauge, in mN
-        return (x - self.GaugeValue) * self.NewtonPerVolt * 1000
+        return (x - self.GaugeValue) * self.NewtonPerCount * 1000
 
     def ClosePort(self) -> None:
         """

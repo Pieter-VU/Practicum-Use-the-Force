@@ -155,7 +155,7 @@
          <string>Gauge Value</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="setNewtonPerVolt">
+       <widget class="QLineEdit" name="setNewtonPerCount">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -165,10 +165,13 @@
          </rect>
         </property>
         <property name="text">
-         <string>0.0000154</string>
+         <string>0.0154</string>
+        </property>
+        <property name="maxLength">
+         <number>32767</number>
         </property>
        </widget>
-       <widget class="QLabel" name="labNewtonPerVolt">
+       <widget class="QLabel" name="labNewtonPerCount">
         <property name="geometry">
          <rect>
           <x>0</x>
@@ -178,7 +181,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Newton per Volt</string>
+         <string>Newton per Count</string>
         </property>
        </widget>
        <widget class="QPushButton" name="butConnect">
@@ -212,8 +215,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>118</width>
+         <height>206</height>
         </rect>
        </property>
        <attribute name="label">
