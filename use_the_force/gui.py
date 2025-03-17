@@ -370,11 +370,15 @@ class UserInterface(QtWidgets.QMainWindow):
 
         while (time < measurementTime or measurementTime == -1*1e9) and self.recording:
             # serial ID, time in nanoseconds, force reading from sensor
-            time, measuredForce = self.sensor.GetReading()
-            Force = self.sensor.ForceFix(measuredForce)
-            timeS = time/1e9
-            self.data[0].append(timeS)
-            self.data[1].append(Force)
+            try:
+                time, measuredForce = self.sensor.GetReading()
+                Force = self.sensor.ForceFix(measuredForce)
+                timeS = time/1e9
+                self.data[0].append(timeS)
+                self.data[1].append(Force)
+            except ValueError:
+                # I know this isn't the best way to deal with it, but it works fine (for now)
+                pass
         if self.recording:
             self.butRecord()
         self.unsavedData = self.data
