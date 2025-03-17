@@ -231,7 +231,7 @@ class UserInterface(QtWidgets.QMainWindow):
 
     def butFile(self):
         if self.ui.butFile.isChecked():
-            self.ui.butFile.setChecked(False)
+            self.ui.butFile.setChecked(True)
             self.measurementLog.closeFile()
             self.ui.butFile.setText("-")
         else:
@@ -259,6 +259,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butRecord.setText("Start")
             self.ui.butRecord.setChecked(True)
             self.ui.butClear.setEnabled(True)
+            self.ui.butFile.setEnabled(True)
             if self.ui.butFile.text()!="-":
                 self.startMainLog.join()
             else:
@@ -268,6 +269,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butRecord.setText("Stop")
             self.ui.butRecord.setChecked(True)
             self.ui.butClear.setEnabled(False)
+            self.ui.butFile.setEnabled(False)
             if self.ui.butFile.text()!="-":
                 self.startMainLog = threading.Thread(target=self.mainLog)
                 self.startMainLog.start()
