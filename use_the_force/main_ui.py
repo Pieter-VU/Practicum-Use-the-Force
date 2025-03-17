@@ -205,7 +205,7 @@ class Ui_MainWindow(object):
         self.setMaxNewton.setText(QCoreApplication.translate("MainWindow", u"5", None))
         self.setGaugeValue.setText(QCoreApplication.translate("MainWindow", u"0", None))
         self.labGaugeValue.setText(QCoreApplication.translate("MainWindow", u"Gauge Value", None))
-        self.setNewtonPerCount.setText(QCoreApplication.translate("MainWindow", u"0.0154", None))
+        self.setNewtonPerCount.setText(QCoreApplication.translate("MainWindow", u"1.", None))
         self.labNewtonPerCount.setText(QCoreApplication.translate("MainWindow", u"Newton per Count", None))
         self.butConnect.setText(QCoreApplication.translate("MainWindow", u"Connect", None))
         self.toolBox.setItemText(self.toolBox.indexOf(self.sensorOptions), QCoreApplication.translate("MainWindow", u"Sensor", None))

@@ -165,7 +165,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>0.0154</string>
+         <string>1.</string>
         </property>
         <property name="maxLength">
          <number>32767</number>
