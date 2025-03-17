@@ -142,7 +142,7 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.ui.graph1.setXRange(0, self.data[0][-1])
                 self.ui.graph1.setYRange(min(self.data[1]),max(self.data[1]))
 
-    def updatePlotLabel(self, labelLoc, labelTxt) -> None:
+    def updatePlotLabel(self, labelLoc: str, labelTxt: str) -> None:
         """
         Updates the label
 
