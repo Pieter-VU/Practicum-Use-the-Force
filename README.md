@@ -2,3 +2,6 @@
 Subfolder use_the_force is a python package that can be imported into Python. (In the future)
 
 Run `main.py` to activate the GUI.
+
+# License
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
