@@ -1,5 +1,6 @@
 ﻿# Use the Force
-[![GitHub license](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
+[![GitHub license](https://img.shields.io/github/license/NatuurkundePracticumAmsterdam/Use-the-Force
+)](LICENSE)
 
 Python package for physics practicum at Vrije Universiteit Amsterdam.
 
