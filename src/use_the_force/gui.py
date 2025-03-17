@@ -186,6 +186,7 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.startsensorDisonnect = threading.Thread(target=self.sensorDisconnect)
                 self.startsensorDisonnect.start()
             else:
+                self.ui.butFile.setEnabled(False)
                 self.startsensorConnect = threading.Thread(target=self.sensorConnect)
                 self.startsensorConnect.start()
             
@@ -201,17 +202,19 @@ class UserInterface(QtWidgets.QMainWindow):
             if self.measurementLog == None:
                 self.butClear()
                 self.butRecord()
-            self.butConnectPressed = False
-            self.ui.butConnect.setEnabled(True)
+            else:
+                self.ui.butFile.setEnabled(True)
+            
             self.ui.butConnect.setChecked(True)
 
         except Exception as e:
             self.error(e.__class__, e.args[0])
+            # Allow the stick (and windows) some time to restart/ de-initialize the connection
             sleep(0.5)
-            self.butConnectPressed = False
             self.ui.butConnect.setText("Connect")
-            self.ui.butConnect.setEnabled(True)
-            
+        
+        self.butConnectPressed = False
+        self.ui.butConnect.setEnabled(True)
     
     def sensorDisconnect(self):
         if self.recording:
@@ -241,7 +244,7 @@ class UserInterface(QtWidgets.QMainWindow):
                     self.oldFilepath = self.filePath
             #self.filePath, _ = QtWidgets.QFileDialog.getSaveFileName(filter="CSV files (*.csv)", options=QtWidgets.QFileDialog.DontConfirmOverwrite)
             self.filePath, _ = QtWidgets.QFileDialog.getSaveFileName(filter="CSV files (*.csv)")
-            if self.filePath != "":
+            if self.filePath != "" and self.filePath != "-":
                 self.measurementLog = Logging(self.filePath)
                 self.measurementLog.createLogGUI()
                 self.ui.butFile.setText(*self.filePath.split("/")[-1].split(".")[:-1])
@@ -260,6 +263,8 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butRecord.setChecked(True)
             self.ui.butClear.setEnabled(True)
             self.ui.butFile.setEnabled(True)
+            self.ui.butReGauge.setEnabled(True)
+            self.ui.butSave.setEnabled(True)
             if self.ui.butFile.text()!="-":
                 self.startMainLog.join()
             else:
@@ -270,6 +275,8 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butRecord.setChecked(True)
             self.ui.butClear.setEnabled(False)
             self.ui.butFile.setEnabled(False)
+            self.ui.butReGauge.setEnabled(False)
+            self.ui.butSave.setEnabled(False)
             if self.ui.butFile.text()!="-":
                 self.startMainLog = threading.Thread(target=self.mainLog)
                 self.startMainLog.start()
@@ -284,8 +291,10 @@ class UserInterface(QtWidgets.QMainWindow):
         #self.ui.graph1.setXRange(-0.1, 0.1)
         #self.ui.graph1.setYRange(-0.1, 0.1)
         self.ui.graph1.clear()
+        self.ui.butSave.setEnabled(False)
 
     def butReGauge(self):
+        self.ui.butReGauge.setEnabled(False)
         th = threading.Thread(target=self.butReGaugeActive)
         th.start()
 
@@ -300,14 +309,22 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butReGauge.setText("...")
         self.sensor.reGauge()
         self.ui.butReGauge.setText("ReGauge")
-        self.ui.butReGauge.setChecked(True)
+        self.ui.butReGauge.setEnabled(True)
+        self.ui.butReGauge.setChecked(False)
 
     def butSave(self):
-        self.butFile()
-        if self.filePath != "":
+        if self.ui.butFile.isChecked():
             self.measurementLog.writeLogFull(self.unsavedData)
             self.measurementLog.closeFile()
             self.ui.butSave.setEnabled(False)
+            self.butFile()
+
+        else:
+            self.butFile()
+            if self.filePath != "":
+                self.measurementLog.writeLogFull(self.unsavedData)
+                self.measurementLog.closeFile()
+                self.ui.butSave.setEnabled(False)
 
 
     def xLimSlider(self):
