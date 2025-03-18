@@ -21,7 +21,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self.measurementLog = None
-        self.butConnectPressed = False
+        self.butConnectPressed: bool = False
 
         self.ui.error = self.error
 
@@ -33,7 +33,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butSave.pressed.connect(self.butSave)
         self.ui.setNewtonPerCount.textEdited.connect(self.setNewtonPerCount)
 
-        self.recording = False
+        self.recording: bool = False
         self.data = [[], []]
 
         self.plot(clrBg="default")
@@ -284,6 +284,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setChecked(True)
             self.measurementLog.closeFile()
             self.ui.butFile.setText("-")
+            self.butClear()
         else:
             self.ui.butFile.setChecked(True)
             if hasattr(self, 'filePath'):
@@ -354,6 +355,8 @@ class UserInterface(QtWidgets.QMainWindow):
         starts a thread to count down, end of thread re-enables button
         """
         self.ui.butReGauge.setEnabled(False)
+        self.ui.butConnect.setEnabled(False)
+        self.ui.butRecord.setEnabled(False)
         th = threading.Thread(target=self.butReGaugeActive)
         th.start()
 
@@ -372,6 +375,8 @@ class UserInterface(QtWidgets.QMainWindow):
         self.sensor.reGauge()
         self.ui.butReGauge.setText("ReGauge")
         self.ui.butReGauge.setEnabled(True)
+        self.ui.butConnect.setEnabled(True)
+        self.ui.butRecord.setEnabled(True)
         self.ui.butReGauge.setChecked(False)
 
     def butSave(self) -> None:
@@ -531,6 +536,11 @@ class ForceSensorGUI():
         self.baudrate: int = kwargs.pop('baudrate', 57600)
         self.timeout: float = kwargs.pop('timeout', 2)
 
+        # M5Din Meter only gives back values with 6 decimals max
+        self.gaugeRound: int = 6
+        self.gaugeLines: int = 10
+        self.gaugeSkipLines: int = 10
+
         self.T0 = perf_counter_ns()
 
         self.PortName: str = self.ui.setPortName.text()
@@ -570,11 +580,10 @@ class ForceSensorGUI():
         # !!!IT'S IMPORTANT NOT TO HAVE ANY FORCE ON THE SENSOR WHEN CALLING THIS FUNCTION!!!
         """
         self.ser.reset_input_buffer()
-        skips: list[float] = [self.GetReading()[1] for i in range(3)]
-        reads: list[float] = [self.GetReading()[1] for i in range(10)]
-        self.GaugeValue = int(sum(reads)/10)
+        skips: list[float] = [self.GetReading()[1] for i in range(self.gaugeSkipLines)]
+        reads: list[float] = [self.GetReading()[1] for i in range(self.gaugeLines)]
+        self.GaugeValue = round(sum(reads)/self.gaugeLines, self.gaugeRound)
         self.ui.setGaugeValue.setText(f"{self.GaugeValue}")
-        # print("Self-gauged value: " + str(self.GaugeValue))
 
     def GetReading(self) -> list[int, float, float]:
         """
