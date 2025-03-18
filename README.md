@@ -1,13 +1,12 @@
 ﻿# Use the Force
 [![GitHub license](https://img.shields.io/github/license/NatuurkundePracticumAmsterdam/Use-the-Force
 )](LICENSE)
+[![PyPI - Version](https://img.shields.io/pypi/v/use_the_force)
+](https://pypi.org/project/use_the_force/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/use_the_force)](https://pypi.org/project/use_the_force/)
+
 
 Python package for physics practicum at Vrije Universiteit Amsterdam.
-
-
-Subfolder use_the_force is a python package that can be imported into Python. (In the future)
-
-Run `main.py` to activate the GUI.
 
 ## Features
 Allows for communication with the M5Din Meter given in the practicum.
