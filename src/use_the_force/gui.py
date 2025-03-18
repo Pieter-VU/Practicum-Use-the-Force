@@ -284,6 +284,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setChecked(True)
             self.measurementLog.closeFile()
             self.ui.butFile.setText("-")
+            self.butClear()
         else:
             self.ui.butFile.setChecked(True)
             if hasattr(self, 'filePath'):
