@@ -318,6 +318,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setEnabled(True)
             self.ui.butReGauge.setEnabled(True)
             self.ui.butSave.setEnabled(True)
+            self.sensor.ser.reset_input_buffer()
             if self.ui.butFile.text() != "-":
                 self.startMainLog.join()
             else:
