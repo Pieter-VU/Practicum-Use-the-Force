@@ -1,7 +1,7 @@
 import sys
 from time import perf_counter_ns, sleep
 from PySide6 import QtWidgets
-from PySide6.QtCore import Slot, Signal, QTimer
+from PySide6.QtCore import Slot, Signal, QTimer, QThread, QObject, QRunnable, QThreadPool, Signal
 from PySide6.QtGui import QCloseEvent
 import pyqtgraph as pg
 import threading
@@ -22,7 +22,7 @@ class UserInterface(QtWidgets.QMainWindow):
 
         self.measurementLog = None
         self.butConnectPressed: bool = False
-
+        self.threadReachedEnd = False
         self.ui.error = self.error
 
         self.ui.butConnect.pressed.connect(self.butConnect)
@@ -32,34 +32,36 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butClear.pressed.connect(self.butClear)
         self.ui.butSave.pressed.connect(self.butSave)
         self.ui.setNewtonPerCount.textEdited.connect(self.setNewtonPerCount)
-        self.ui.setPlotTimerInterval.textEdited.connect(self.updatePlotTimerInterval)
+        self.ui.setPlotTimerInterval.textEdited.connect(
+            self.updatePlotTimerInterval)
 
         self.recording: bool = False
         self.data = [[], []]
 
         self.plot(clrBg="default")
-
+        
         # Plot timer interval in ms
         self.plotTimerInterval: int = 100
 
         self.plotTimer = QTimer()
         self.plotTimer.timeout.connect(self.updatePlot)
 
+        self.mainLogWorker = mainLogWorker(self)
+        self.mainLogWorker.startSignal.connect(self.startPlotTimer)
+        self.mainLogWorker.endSignal.connect(self.stopPlotTimer)
+        self.thread_pool = QThreadPool.globalInstance()
+
+
     def closeEvent(self, event: QCloseEvent) -> None:
         """
         Safely closes the program and ends certain threads
 
-        Some threads can be set to run indefinetly, but will now be closed
+        Some threads can be set to run infinitly, but will now be closed
         """
         if self.recording:
             self.recording = False
-            if self.ui.butFile.text() != "-":
-                self.startMainLog.join()
-            else:
-                self.startMainLogLess.join()
         if self.ui.butConnect.isChecked():
             self.butConnect()
-        # return super().closeEvent(event)
 
     def plot(self, data: list | None = None, **kwargs) -> None:
         """
@@ -195,12 +197,25 @@ class UserInterface(QtWidgets.QMainWindow):
             tmp = int(tmp)
             if tmp > 0:
                 self.plotTimerInterval = tmp
-                self.plotTimer.setInterval(self.plotTimerInterval)
+                if hasattr(self, "plotTimer"):
+                    self.plotTimer.setInterval(self.plotTimerInterval)
 
         except:
             pass
-        
+
         del tmp
+
+    def startPlotTimer(self):
+        """
+        Start the QTimer in the main thread when the signal is emitted.
+        """
+        self.plotTimer.start()
+
+    def stopPlotTimer(self):
+        """
+        Stop the QTimer
+        """
+        self.plotTimer.stop()
 
     def butConnect(self) -> None:
         """
@@ -333,29 +348,30 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setEnabled(True)
             self.ui.butReGauge.setEnabled(True)
             self.ui.butSave.setEnabled(True)
-            if self.ui.butFile.text() != "-":
-                self.startMainLog.join()
-            else:
-                self.startMainLogLess.join()
-            self.plotTimer.stop()
+            # if not self.threadReachedEnd:
+            #     if self.ui.butFile.text() != "-":
+            #         self.startMainLog.join()
+            #     else:
+            #         self.startMainLogLess.join()
+            
 
         else:
             self.recording = True
+            self.threadReachedEnd = False
             self.ui.butRecord.setText("Stop")
             self.ui.butRecord.setChecked(True)
             self.ui.butClear.setEnabled(False)
             self.ui.butFile.setEnabled(False)
             self.ui.butReGauge.setEnabled(False)
             self.ui.butSave.setEnabled(False)
-            self.plotTimer.start()
             if self.ui.butFile.text() != "-":
-                self.startMainLog = threading.Thread(target=self.mainLog)
-                self.startMainLog.start()
+                self.mainLogWorker.logLess = False
+                self.thread_pool.start(self.mainLogWorker.run)
 
             else:
-                self.startMainLogLess = threading.Thread(
-                    target=self.mainLogless)
-                self.startMainLogLess.start()
+                self.mainLogWorker.logLess = True
+                self.thread_pool.start(self.mainLogWorker.run)
+
 
     def butClear(self) -> None:
         """
@@ -441,81 +457,6 @@ class UserInterface(QtWidgets.QMainWindow):
         except:
             pass
 
-    def mainLog(self) -> None:
-        """
-        Function to read and save data to a log
-
-        Function assumes file is chosen and opened.
-
-        Will read data from the log and appends to it.
-        """
-        self.data: list[list] = self.measurementLog.readLog(
-            filename=self.filePath)
-
-        if len(self.data[0]) == 0:
-            time: float = 0.
-            self.sensor.T0 = perf_counter_ns()
-        else:
-            time: float = self.data[0][-1]
-            self.sensor.T0 = perf_counter_ns() - int(time*1e9+0.5)
-
-        # a time of `-1` will be seen as infinit and function will keep reading
-        if float(self.ui.setTime.text()) >= 0. and self.ui.setTime.text() != "-1":
-            measurementTime = float(self.ui.setTime.text())*1e9
-        else:
-            measurementTime = -1*1e9
-            self.ui.setTime.setText("-1")
-
-        while (time < measurementTime or measurementTime == -1*1e9) and self.recording:
-            # serial ID, time in nanoseconds, force reading from sensor
-            time, measuredForce = self.sensor.GetReading()
-            Force = self.sensor.ForceFix(measuredForce)
-            timeS = time/1e9
-            self.data[0].append(timeS)
-            self.data[1].append(Force)
-
-            # logs: t(s), F(mN)
-            self.measurementLog.writeLog([timeS, Force])
-        if self.recording:
-            self.butRecord()
-
-    def mainLogless(self) -> None:
-        """
-        Function to read and temporarily save data
-
-        Will append to the temporary data that already exists
-        """
-        if len(self.data[0]) == 0:
-            time: float = 0.
-            self.sensor.T0 = perf_counter_ns()
-        else:
-            time: float = self.data[0][-1]
-            self.sensor.T0 = perf_counter_ns() - int(time*1e9+0.5)
-
-        # a time of `-1` will be seen as infinit and function will keep reading
-        if float(self.ui.setTime.text()) >= 0. and self.ui.setTime.text() != "-1":
-            measurementTime = float(self.ui.setTime.text())*1e9
-        else:
-            measurementTime = -1*1e9
-            self.ui.setTime.setText("-1")
-
-        while (time < measurementTime or measurementTime == -1*1e9) and self.recording:
-            # time in nanoseconds, force reading from sensor
-            try:
-                time, measuredForce = self.sensor.GetReading()
-                Force = self.sensor.ForceFix(measuredForce)
-                timeS = time/1e9
-                self.data[0].append(timeS)
-                self.data[1].append(Force)
-            except ValueError:
-                # I know this isn't the best way to deal with it, but it works fine (for now)
-                pass
-        if self.recording:
-            self.butRecord()
-        self.unsavedData = self.data
-        if not self.ui.butSave.isEnabled():
-            self.ui.butSave.setEnabled(True)
-
     def setNewtonPerCount(self):
         """
         Changes the value of NewtonPerCount when textbox is changed
@@ -531,6 +472,65 @@ class UserInterface(QtWidgets.QMainWindow):
         except:
             pass
 
+class mainLogWorker(QObject, QRunnable):
+    startSignal = Signal()
+    endSignal = Signal()
+
+    def __init__(self, callerSelf):
+        super().__init__()
+        self.callerSelf = callerSelf
+        self.logLess = bool()
+    
+        
+    def run(self):
+        if not self.logLess:
+            self.callerSelf.data = self.callerSelf.measurementLog.readLog(
+            filename=self.callerSelf.filePath)
+
+        if len(self.callerSelf.data[0]) == 0:
+            time: float = 0.
+            self.callerSelf.sensor.T0 = perf_counter_ns()
+        else:
+            time: float = self.callerSelf.data[0][-1]
+            self.callerSelf.sensor.T0 = perf_counter_ns() - int(time*1e9+0.5)
+
+        # a time of `-1` will be seen as infinit and function will keep reading
+        if float(self.callerSelf.ui.setTime.text()) >= 0. and self.callerSelf.ui.setTime.text() != "-1":
+            measurementTime = float(self.callerSelf.ui.setTime.text())*1e9
+        else:
+            measurementTime = -1*1e9
+            self.callerSelf.ui.setTime.setText("-1")
+
+        self.startSignal.emit()
+
+        while (time < measurementTime or measurementTime == -1*1e9) and self.callerSelf.recording:
+            # time in nanoseconds, force reading from sensor
+            try:
+                time, measuredForce = self.callerSelf.sensor.GetReading()
+                Force = self.callerSelf.sensor.ForceFix(measuredForce)
+                timeS = time/1e9
+                self.callerSelf.data[0].append(timeS)
+                self.callerSelf.data[1].append(Force)
+
+                if not self.logLess:
+                    # logs: t(s), F(mN)
+                    self.callerSelf.measurementLog.writeLog([timeS, Force])
+
+            except ValueError:
+                # I know this isn't the best way to deal with it, but it works fine (for now)
+                pass
+        
+        self.endSignal.emit()
+
+        if self.callerSelf.recording:
+            self.callerSelf.threadReachedEnd = True
+            self.callerSelf.butRecord()
+        
+        if self.logLess:
+            self.callerSelf.unsavedData = self.callerSelf.data
+            if not self.callerSelf.ui.butSave.isEnabled():
+                self.callerSelf.ui.butSave.setEnabled(True)
+        
 
 class ForceSensorGUI():
     def __init__(self, ui, WarningOn: bool = False, **kwargs) -> None:
