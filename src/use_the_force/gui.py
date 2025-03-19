@@ -364,6 +364,7 @@ class UserInterface(QtWidgets.QMainWindow):
         del self.data
         self.data = [[], []]
         self.ui.graph1.clear()
+        self.sensor.ser.reset_input_buffer()
         self.ui.butSave.setEnabled(False)
 
     def butReGauge(self) -> None:
