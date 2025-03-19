@@ -32,15 +32,18 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butClear.pressed.connect(self.butClear)
         self.ui.butSave.pressed.connect(self.butSave)
         self.ui.setNewtonPerCount.textEdited.connect(self.setNewtonPerCount)
+        self.ui.setPlotTimerInterval.textEdited.connect(self.updatePlotTimerInterval)
 
         self.recording: bool = False
         self.data = [[], []]
 
         self.plot(clrBg="default")
 
-        self.plot_timer = QTimer()
-        self.plot_timer.timeout.connect(self.updatePlot)
-        self.plot_timer.start(100)
+        # Plot timer interval in ms
+        self.plotTimerInterval: int = 100
+
+        self.plotTimer = QTimer()
+        self.plotTimer.timeout.connect(self.updatePlot)
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -186,6 +189,19 @@ class UserInterface(QtWidgets.QMainWindow):
             self.updatePlotLabel(
                 labelLoc="bottom", labelTxt=self.ui.xLabel.text())
 
+    def updatePlotTimerInterval(self) -> None:
+        tmp = self.ui.setPlotTimerInterval.text()
+        try:
+            tmp = int(tmp)
+            if tmp > 0:
+                self.plotTimerInterval = tmp
+                self.plotTimer.setInterval(self.plotTimerInterval)
+
+        except:
+            pass
+        
+        del tmp
+
     def butConnect(self) -> None:
         """
         Function defining what to do when a button is pressed.
@@ -226,7 +242,6 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butConnect.setText("Connected")
             if self.measurementLog == None:
                 self.butClear()
-                self.butRecord()
             else:
                 self.ui.butFile.setEnabled(True)
 
@@ -323,6 +338,8 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.startMainLog.join()
             else:
                 self.startMainLogLess.join()
+            self.plotTimer.stop()
+
         else:
             self.recording = True
             self.ui.butRecord.setText("Stop")
@@ -331,6 +348,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setEnabled(False)
             self.ui.butReGauge.setEnabled(False)
             self.ui.butSave.setEnabled(False)
+            self.plotTimer.start()
             if self.ui.butFile.text() != "-":
                 self.startMainLog = threading.Thread(target=self.mainLog)
                 self.startMainLog.start()
@@ -581,8 +599,10 @@ class ForceSensorGUI():
         # !!!IT'S IMPORTANT NOT TO HAVE ANY FORCE ON THE SENSOR WHEN CALLING THIS FUNCTION!!!
         """
         self.ser.reset_input_buffer()
-        skips: list[float] = [self.GetReading()[1] for i in range(self.gaugeSkipLines)]
-        reads: list[float] = [self.GetReading()[1] for i in range(self.gaugeLines)]
+        skips: list[float] = [self.GetReading()[1]
+                              for i in range(self.gaugeSkipLines)]
+        reads: list[float] = [self.GetReading()[1]
+                              for i in range(self.gaugeLines)]
         self.GaugeValue = round(sum(reads)/self.gaugeLines, self.gaugeRound)
         self.ui.setGaugeValue.setText(f"{self.GaugeValue}")
 

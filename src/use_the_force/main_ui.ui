@@ -20,7 +20,7 @@
       <x>0</x>
       <y>20</y>
       <width>120</width>
-      <height>300</height>
+      <height>380</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -41,7 +41,7 @@
        <x>0</x>
        <y>0</y>
        <width>120</width>
-       <height>300</height>
+       <height>380</height>
       </rect>
      </property>
      <widget class="QToolBox" name="toolBox">
@@ -50,10 +50,10 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>1</x>
         <y>0</y>
-        <width>120</width>
-        <height>298</height>
+        <width>118</width>
+        <height>379</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -67,8 +67,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>118</width>
-         <height>206</height>
+         <width>116</width>
+         <height>287</height>
         </rect>
        </property>
        <attribute name="label">
@@ -77,9 +77,9 @@
        <widget class="QLabel" name="labPortName">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>-1</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -93,9 +93,9 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>19</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -106,9 +106,9 @@
        <widget class="QLabel" name="labMaxNewton">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>119</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -119,9 +119,9 @@
        <widget class="QLineEdit" name="setMaxNewton">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>139</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -132,9 +132,9 @@
        <widget class="QLineEdit" name="setGaugeValue">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>59</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -145,9 +145,9 @@
        <widget class="QLabel" name="labGaugeValue">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>39</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -158,9 +158,9 @@
        <widget class="QLineEdit" name="setNewtonPerCount">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>99</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -174,9 +174,9 @@
        <widget class="QLabel" name="labNewtonPerCount">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>79</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -187,9 +187,9 @@
        <widget class="QPushButton" name="butConnect">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>159</y>
-          <width>116</width>
+          <width>113</width>
           <height>40</height>
          </rect>
         </property>
@@ -215,8 +215,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>118</width>
-         <height>206</height>
+         <width>116</width>
+         <height>287</height>
         </rect>
        </property>
        <attribute name="label">
@@ -225,9 +225,9 @@
        <widget class="QLabel" name="fileLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>-1</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -238,9 +238,9 @@
        <widget class="QPushButton" name="butFile">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>19</y>
-          <width>116</width>
+          <width>113</width>
           <height>22</height>
          </rect>
         </property>
@@ -257,8 +257,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>118</width>
-         <height>206</height>
+         <width>116</width>
+         <height>287</height>
         </rect>
        </property>
        <attribute name="label">
@@ -267,9 +267,9 @@
        <widget class="QLineEdit" name="xLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>99</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -283,9 +283,9 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>59</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -296,9 +296,9 @@
        <widget class="QLabel" name="yLabelLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>39</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -309,9 +309,9 @@
        <widget class="QLabel" name="xLabelLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>79</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -322,9 +322,9 @@
        <widget class="QLabel" name="xLimLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>119</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -335,9 +335,9 @@
        <widget class="QLineEdit" name="title">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>19</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -348,9 +348,9 @@
        <widget class="QLabel" name="titleLabel">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>-1</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -361,9 +361,9 @@
        <widget class="QSlider" name="xLimSlider">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>139</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
@@ -386,14 +386,40 @@
        <widget class="QLineEdit" name="xLimSet">
         <property name="geometry">
          <rect>
-          <x>0</x>
+          <x>1</x>
           <y>159</y>
-          <width>116</width>
+          <width>113</width>
           <height>20</height>
          </rect>
         </property>
         <property name="text">
          <string>0</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="setPlotTimerInterval">
+        <property name="geometry">
+         <rect>
+          <x>1</x>
+          <y>199</y>
+          <width>113</width>
+          <height>21</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>100</string>
+        </property>
+       </widget>
+       <widget class="QLabel" name="plotTimerIntervalLabel">
+        <property name="geometry">
+         <rect>
+          <x>1</x>
+          <y>179</y>
+          <width>113</width>
+          <height>20</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Refresh Time (ms)</string>
         </property>
        </widget>
       </widget>
@@ -423,62 +449,6 @@
      </property>
      <property name="frameShadow">
       <enum>QFrame::Shadow::Sunken</enum>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="hoverPoint" native="true">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>320</y>
-      <width>120</width>
-      <height>80</height>
-     </rect>
-    </property>
-    <widget class="QLabel" name="labelYValue">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>120</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;y value&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="labelXValue">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>40</y>
-       <width>120</width>
-       <height>20</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;x value&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="yValue">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>20</y>
-       <width>120</width>
-       <height>20</height>
-      </rect>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="xValue">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>60</y>
-       <width>120</width>
-       <height>20</height>
-      </rect>
      </property>
     </widget>
    </widget>
