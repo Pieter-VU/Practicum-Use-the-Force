@@ -333,7 +333,6 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setEnabled(True)
             self.ui.butReGauge.setEnabled(True)
             self.ui.butSave.setEnabled(True)
-            self.sensor.ser.reset_input_buffer()
             if self.ui.butFile.text() != "-":
                 self.startMainLog.join()
             else:
@@ -365,6 +364,7 @@ class UserInterface(QtWidgets.QMainWindow):
         del self.data
         self.data = [[], []]
         self.ui.graph1.clear()
+        self.sensor.ser.reset_input_buffer()
         self.ui.butSave.setEnabled(False)
 
     def butReGauge(self) -> None:
