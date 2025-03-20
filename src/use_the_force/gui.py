@@ -49,6 +49,9 @@ class UserInterface(QtWidgets.QMainWindow):
         self.mainLogWorker = mainLogWorker(self)
         self.mainLogWorker.startSignal.connect(self.startPlotTimer)
         self.mainLogWorker.endSignal.connect(self.stopPlotTimer)
+        self.saveToLog = saveToLog(self)
+        self.saveToLog.startSignal.connect(self.startPlotTimer)
+        self.saveToLog.endSignal.connect(self.stopPlotTimer)
         self.thread_pool = QThreadPool.globalInstance()
 
 
@@ -431,9 +434,16 @@ class UserInterface(QtWidgets.QMainWindow):
             self.butFile()
             # Cancelling file selecting gives a 0 length string
             if self.filePath != "":
-                self.measurementLog.writeLogFull(self.unsavedData)
-                self.butFile()
                 self.ui.butSave.setEnabled(False)
+                self.thread_pool.start(self.saveToLog.run)
+        
+    def saveStart(self):
+        self.ui.butSave.setText(f"Saving {len(self.data)}")
+
+    def saveEnd(self):
+        self.ui.butSave.setText("Save")
+        self.callerSelf.butFile()
+                
 
     def xLimSlider(self) -> None:
         """
@@ -526,10 +536,23 @@ class mainLogWorker(QObject, QRunnable):
             self.callerSelf.butRecord()
         
         if self.logLess:
-            self.callerSelf.unsavedData = self.callerSelf.data
+            # self.callerSelf.unsavedData = self.callerSelf.data
             if not self.callerSelf.ui.butSave.isEnabled():
                 self.callerSelf.ui.butSave.setEnabled(True)
-        
+
+class saveToLog(QObject, QRunnable):
+    startSignal = Signal()
+    endSignal = Signal()
+
+    def __init__(self, callerSelf):
+        super().__init__()
+        self.callerSelf = callerSelf
+
+    def run(self):
+        self.startSignal.emit()
+        self.callerSelf.measurementLog.writeLogFull(self.callerSelf.data)
+        self.endSignal.emit()
+
 
 class ForceSensorGUI():
     def __init__(self, ui, WarningOn: bool = False, **kwargs) -> None:
