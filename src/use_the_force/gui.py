@@ -424,7 +424,6 @@ class UserInterface(QtWidgets.QMainWindow):
         """
         if self.ui.butFile.isChecked():
             self.measurementLog.writeLogFull(self.unsavedData)
-            self.measurementLog.closeFile()
             self.ui.butSave.setEnabled(False)
             self.butFile()
 
@@ -433,7 +432,7 @@ class UserInterface(QtWidgets.QMainWindow):
             # Cancelling file selecting gives a 0 length string
             if self.filePath != "":
                 self.measurementLog.writeLogFull(self.unsavedData)
-                self.measurementLog.closeFile()
+                self.butFile()
                 self.ui.butSave.setEnabled(False)
 
     def xLimSlider(self) -> None:
