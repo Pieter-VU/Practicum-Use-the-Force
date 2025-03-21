@@ -92,7 +92,7 @@ class Logging():
 
     def readLog(self, *, filename: str | None = None) -> list[list[float], list[float]]:
         if filename == None:
-            filename == self.filename
+            filename = self.filename
         
         if self.NeverCloseFile and filename != None:
             file = self.HAND

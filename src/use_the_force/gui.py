@@ -34,8 +34,11 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.setNewtonPerCount.textEdited.connect(self.setNewtonPerCount)
         self.ui.setPlotTimerInterval.textEdited.connect(
             self.updatePlotTimerInterval)
+        self.ui.butFileGraphImport.pressed.connect(self.butFileGraph)
 
         self.recording: bool = False
+        self.fileGraphToggle: bool = False
+        self.fileToggle: bool = False
         self.data = [[], []]
 
         self.plot(clrBg="default")
@@ -302,31 +305,81 @@ class UserInterface(QtWidgets.QMainWindow):
         - `if isChecked():` close file
         - `else:` opens dialog box to select/ create a .csv file
         """
-        if self.ui.butFile.isChecked():
-            self.ui.butFile.setChecked(True)
+        if self.fileToggle:
+            self.fileToggle = False
+            # self.ui.butFile.setChecked(True)
             self.measurementLog.closeFile()
+            del self.measurementLog
             self.ui.butFile.setText("-")
             self.butClear()
+            self.ui.butFileGraphImport.setEnabled(True)
+
         else:
-            self.ui.butFile.setChecked(True)
+            self.fileToggle = True
+            # self.ui.butFile.setChecked(True)
             if hasattr(self, 'filePath'):
                 if self.filePath != "":
                     self.oldFilepath = self.filePath
             # self.filePath, _ = QtWidgets.QFileDialog.getSaveFileName(filter="CSV files (*.csv)", options=QtWidgets.QFileDialog.DontConfirmOverwrite)
             self.filePath, _ = QtWidgets.QFileDialog.getSaveFileName(
                 filter="CSV files (*.csv)")
-            if self.filePath != "" and self.filePath != "-":
+            if self.filePath != "":
                 self.measurementLog = Logging(self.filePath)
                 self.measurementLog.createLogGUI()
                 self.ui.butFile.setText(
                     *self.filePath.split("/")[-1].split(".")[:-1])
+                self.ui.butFileGraphImport.setEnabled(False)
+                self.ui.butFileGraphImport.setText(
+                    f"Close File: {"".join(*self.filePath.split("/")[-1].split(".")[:-1])}")
             elif hasattr(self, "oldFilepath"):
                 self.filePath = self.oldFilepath
+                del self.oldFilepath
                 self.measurementLog = Logging(self.filePath)
                 self.measurementLog.createLogGUI()
+                self.ui.butFileGraphImport.setEnabled(False)
+                self.ui.butFileGraphImport.setText(
+                    f"Close File: {"".join(*self.filePath.split("/")[-1].split(".")[:-1])}")
             else:
+                self.fileToggle = False
                 self.ui.butFile.setText("-")
                 self.ui.butFile.setChecked(False)
+
+    def butFileGraph(self) -> None:
+        """
+        Function for what `butFileGraphImport` has to do.
+
+        What to do is based on if the button is in the `isChecked()` state. 
+        - `if isChecked():` close file and clear plot
+        - `else:` opens dialog box to select a .csv file
+        """
+        if self.fileGraphToggle:
+            self.fileGraphToggle = False
+            self.ui.butFileGraphImport.setChecked(True)
+            self.measurementLog.closeFile()
+            del self.measurementLog
+            self.ui.butFileGraphImport.setText("-")
+            self.ui.butFile.setEnabled(True)
+            self.butClear()
+
+        else:
+            self.fileGraphToggle = True
+            self.filePathGraph, _ = QtWidgets.QFileDialog.getOpenFileName(
+                filter="CSV files (*.csv)")
+
+            if self.filePathGraph != "":
+                self.measurementLog = Logging(self.filePathGraph)
+                self.ui.butFileGraphImport.setChecked(True)
+                self.ui.butFileGraphImport.setText(
+                    *self.filePathGraph.split("/")[-1].split(".")[:-1])
+                self.measurementLog.filename
+                self.data = self.measurementLog.readLog()
+                self.updatePlot()
+                
+            else:
+                self.fileGraphToggle = False
+                del self.filePathGraph
+                self.ui.butFileGraphImport.setText("-")
+                self.ui.butFileGraphImport.setChecked(False)
 
     def butRecord(self) -> None:
         """
@@ -371,7 +424,8 @@ class UserInterface(QtWidgets.QMainWindow):
         del self.data
         self.data = [[], []]
         self.ui.graph1.clear()
-        self.sensor.ser.reset_input_buffer()
+        if hasattr(self, "sensor"):
+            self.sensor.ser.reset_input_buffer()
         self.ui.butSave.setEnabled(False)
 
     def butReGauge(self) -> None:
