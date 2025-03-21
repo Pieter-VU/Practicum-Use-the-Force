@@ -171,27 +171,17 @@ class UserInterface(QtWidgets.QMainWindow):
             labelTxt
         )
 
-        match labelLoc:
-            case "top": self.ui.graph1.setLabel("bottom")
-            case "bottom": self.ui.graph1.setLabel("top")
-            case "left": self.ui.graph1.setLabel("right")
-            case "right": self.ui.graph1.setLabel("left")
+        # match labelLoc:
+        #     case "top": self.ui.graph1.setLabel("bottom")
+        #     case "bottom": self.ui.graph1.setLabel("top")
+        #     case "left": self.ui.graph1.setLabel("right")
+        #     case "right": self.ui.graph1.setLabel("left")
 
     def updatePlotYLabel(self) -> None:
-        if self.ui.yLabelSideSlider.value() == 0:
-            self.updatePlotLabel(
-                labelLoc="left", labelTxt=self.ui.yLabel.text())
-        else:
-            self.updatePlotLabel(
-                labelLoc="right", labelTxt=self.ui.yLabel.text())
+        self.updatePlotLabel(labelLoc="left", labelTxt=self.ui.yLabel.text())
 
     def updatePlotXLabel(self) -> None:
-        if self.ui.xLabelSideSlider.value() == 0:
-            self.updatePlotLabel(
-                labelLoc="top", labelTxt=self.ui.xLabel.text())
-        else:
-            self.updatePlotLabel(
-                labelLoc="bottom", labelTxt=self.ui.xLabel.text())
+        self.updatePlotLabel(labelLoc="bottom", labelTxt=self.ui.xLabel.text())
 
     def updatePlotTimerInterval(self) -> None:
         tmp = self.ui.setPlotTimerInterval.text()
