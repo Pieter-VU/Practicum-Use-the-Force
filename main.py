@@ -1,5 +1,5 @@
 import src.use_the_force as utforce
-import src.use_the_force.gui as gui
+from src.use_the_force import gui
 
 def main():
     gui.start()

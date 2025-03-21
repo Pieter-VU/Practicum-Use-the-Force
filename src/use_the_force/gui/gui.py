@@ -9,7 +9,7 @@ import bisect
 from .main_ui import Ui_MainWindow
 from .error_ui import Ui_errorWindow
 
-from .logging import Logging
+from ..logging import Logging
 
 
 class UserInterface(QtWidgets.QMainWindow):

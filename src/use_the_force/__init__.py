@@ -9,6 +9,5 @@ from .plotting import Plotting
 __all__ = [
     "ForceSensor",
     "Logging",
-    "Plotting",
-    "gui",
+    "Plotting"
 ]

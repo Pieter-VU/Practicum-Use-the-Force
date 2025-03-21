@@ -38,7 +38,7 @@ class Logging():
 
     def createLogGUI(self, ext='.csv') -> None:
         """
-        Creates a new file for logging.
+        Creates a new file for logging, GUI variant.
         """
 
         # Check for a file that does not exist yet.
