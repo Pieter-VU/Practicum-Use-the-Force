@@ -39,7 +39,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.data = [[], []]
 
         self.plot(clrBg="default")
-        
+
         # Plot timer interval in ms
         self.plotTimerInterval: int = 100
 
@@ -49,8 +49,10 @@ class UserInterface(QtWidgets.QMainWindow):
         self.mainLogWorker = mainLogWorker(self)
         self.mainLogWorker.startSignal.connect(self.startPlotTimer)
         self.mainLogWorker.endSignal.connect(self.stopPlotTimer)
+        self.saveToLog = saveToLog(self)
+        self.saveToLog.startSignal.connect(self.startPlotTimer)
+        self.saveToLog.endSignal.connect(self.stopPlotTimer)
         self.thread_pool = QThreadPool.globalInstance()
-
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -343,7 +345,6 @@ class UserInterface(QtWidgets.QMainWindow):
             #         self.startMainLog.join()
             #     else:
             #         self.startMainLogLess.join()
-            
 
         else:
             self.recording = True
@@ -361,7 +362,6 @@ class UserInterface(QtWidgets.QMainWindow):
             else:
                 self.mainLogWorker.logLess = True
                 self.thread_pool.start(self.mainLogWorker.run)
-
 
     def butClear(self) -> None:
         """
@@ -409,22 +409,27 @@ class UserInterface(QtWidgets.QMainWindow):
         Function for what `butSave` has to do.
 
         What to do is based on if `butFile` is in the `isChecked()` state. 
-        - `if isChecked():` write data to current file and close file
+        - `if isChecked():` do nothing as it is already saved
         - `else:` open new file and write data
         """
         if self.ui.butFile.isChecked():
-            self.measurementLog.writeLogFull(self.unsavedData)
-            self.measurementLog.closeFile()
+            # When a file is selected it will already
+            # write to the file when it reads a line
             self.ui.butSave.setEnabled(False)
-            self.butFile()
 
         else:
             self.butFile()
             # Cancelling file selecting gives a 0 length string
             if self.filePath != "":
-                self.measurementLog.writeLogFull(self.unsavedData)
-                self.measurementLog.closeFile()
                 self.ui.butSave.setEnabled(False)
+                self.thread_pool.start(self.saveToLog.run)
+
+    def saveStart(self):
+        self.ui.butSave.setText(f"Saving {len(self.data)}")
+
+    def saveEnd(self):
+        self.ui.butSave.setText("Save")
+        self.callerSelf.butFile()
 
     def xLimSlider(self) -> None:
         """
@@ -462,6 +467,7 @@ class UserInterface(QtWidgets.QMainWindow):
         except:
             pass
 
+
 class mainLogWorker(QObject, QRunnable):
     startSignal = Signal()
     endSignal = Signal()
@@ -470,12 +476,11 @@ class mainLogWorker(QObject, QRunnable):
         super().__init__()
         self.callerSelf = callerSelf
         self.logLess = bool()
-    
-        
+
     def run(self):
         if not self.logLess:
             self.callerSelf.data = self.callerSelf.measurementLog.readLog(
-            filename=self.callerSelf.filePath)
+                filename=self.callerSelf.filePath)
 
         if len(self.callerSelf.data[0]) == 0:
             time: float = 0.
@@ -509,18 +514,32 @@ class mainLogWorker(QObject, QRunnable):
             except ValueError:
                 # I know this isn't the best way to deal with it, but it works fine (for now)
                 pass
-        
+
         self.endSignal.emit()
 
         if self.callerSelf.recording:
             self.callerSelf.threadReachedEnd = True
             self.callerSelf.butRecord()
-        
+
         if self.logLess:
-            self.callerSelf.unsavedData = self.callerSelf.data
+            # self.callerSelf.unsavedData = self.callerSelf.data
             if not self.callerSelf.ui.butSave.isEnabled():
                 self.callerSelf.ui.butSave.setEnabled(True)
-        
+
+
+class saveToLog(QObject, QRunnable):
+    startSignal = Signal()
+    endSignal = Signal()
+
+    def __init__(self, callerSelf):
+        super().__init__()
+        self.callerSelf = callerSelf
+
+    def run(self):
+        self.startSignal.emit()
+        self.callerSelf.measurementLog.writeLogFull(self.callerSelf.data)
+        self.endSignal.emit()
+
 
 class ForceSensorGUI():
     def __init__(self, ui, WarningOn: bool = False, **kwargs) -> None:

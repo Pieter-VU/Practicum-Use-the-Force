@@ -82,9 +82,8 @@ class Logging():
             self.HAND = open(self.full_filename, 'a+')
 
         # Write data
-        for i, d in enumerate(data[0]):
-            self.HAND.write(str(round(d, 8))+","+str(round(data[1][i], 8))+"\n")
-
+        for d, F in zip(data[0], data[1]):
+            self.HAND.write(str(round(d, 8))+","+str(round(F, 8))+"\n")
         # Close file
         if not self.NeverCloseFile:
             self.HAND.close()
