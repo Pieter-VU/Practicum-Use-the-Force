@@ -13,9 +13,9 @@ Allows for communication with the M5Din Meter given in the practicum.
 Gives a GUI that includes various settings when using the M5Din Meter.
 
 ## Using the GUI
-The GUI can be called upon with the `main()` function in `use_the_force.gui`. 
+The GUI can be called upon with the `start()` function in `use_the_force.gui`. 
 
-Or by rewriting the `main()` function yourself:
+Or by rewriting the `start()` function yourself:
 ```py
 import sys
 from PySide6 import QtWidgets

@@ -758,7 +758,7 @@ class ErrorInterface(QtWidgets.QDialog):
         self.ui.ErrorText.setText(errorText)
 
 
-def main() -> None:
+def start() -> None:
     """
     Basic main function that starts the GUI
 
