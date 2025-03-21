@@ -355,6 +355,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setEnabled(False)
             self.ui.butReGauge.setEnabled(False)
             self.ui.butSave.setEnabled(False)
+            self.sensor.ser.reset_input_buffer()
             if self.ui.butFile.text() != "-":
                 self.mainLogWorker.logLess = False
                 self.thread_pool.start(self.mainLogWorker.run)
