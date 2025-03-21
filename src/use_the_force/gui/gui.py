@@ -6,6 +6,8 @@ from PySide6.QtGui import QCloseEvent
 import pyqtgraph as pg
 import threading
 import bisect
+import serial
+from serial.tools import list_ports
 from .main_ui import Ui_MainWindow
 from .error_ui import Ui_errorWindow
 
@@ -21,7 +23,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.setupUi(self)
 
         self.measurementLog = None
-        self.butConnectPressed: bool = False
+        self.butConnectToggle: bool = False
         self.threadReachedEnd = False
         self.ui.error = self.error
 
@@ -220,22 +222,29 @@ class UserInterface(QtWidgets.QMainWindow):
         - Starts a thread to connect/ disconnect the sensor
         - Thread ends with re-enabling the button
         """
-        # We do not want users spamming the button and
-        # making the program try to conenct multiple times.
-        if not self.butConnectPressed:
-            self.butConnectPressed = True
-            # Gets enabled again at the end of the thread
-            self.ui.butConnect.setEnabled(False)
-            if self.ui.butConnect.isChecked():
-                self.startsensorDisonnect = threading.Thread(
-                    target=self.sensorDisconnect)
-                self.startsensorDisonnect.start()
-            else:
+        # Gets enabled again at the end of the thread
+        self.ui.butConnect.setEnabled(False)
+
+        if self.butConnectToggle:
+            self.butConnectToggle = False
+
+            self.startsensorDisonnect = threading.Thread(
+                target=self.sensorDisconnect)
+            self.startsensorDisonnect.start()
+
+        else:
+            if self.ui.setPortName.text().upper() in [port.device for port in list_ports.comports()]:
                 # Gets enabled again at the end of the thread
+                self.butConnectToggle = True
                 self.ui.butFile.setEnabled(False)
                 self.startsensorConnect = threading.Thread(
                     target=self.sensorConnect)
                 self.startsensorConnect.start()
+            else:
+                self.error("Port not found", f"Port: {self.ui.setPortName.text().upper()} was not detected!")
+                self.ui.butConnect.setText("Connect")
+                self.butConnectToggle = False
+                self.ui.butConnect.setEnabled(True)
 
     def sensorConnect(self) -> None:
         """
@@ -262,8 +271,8 @@ class UserInterface(QtWidgets.QMainWindow):
             # Allow the stick (and windows) some time to restart/ de-initialize the connection
             sleep(0.5)
             self.ui.butConnect.setText("Connect")
+            self.butConnectToggle = False
 
-        self.butConnectPressed = False
         self.ui.butConnect.setEnabled(True)
 
     def sensorDisconnect(self) -> None:
@@ -279,7 +288,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.sensor.ClosePort()
         # Give some time to Windows/ M5Din Meter to fully disconnect
         sleep(0.5)
-        self.butConnectPressed = False
+        self.butConnectToggle = True
         self.ui.butConnect.setText("Connect")
         self.ui.butConnect.setEnabled(True)
         self.ui.butConnect.setChecked(False)
@@ -309,7 +318,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.fileOpen = False
             self.ui.butFile.setChecked(True)
             self.measurementLog.closeFile()
-            del self.measurementLog
+            self.measurementLog = None
             self.ui.butFile.setText("-")
             self.butClear()
             self.ui.butFileGraphImport.setEnabled(True)
@@ -357,7 +366,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.fileGraphOpen = False
             self.ui.butFileGraphImport.setChecked(True)
             self.measurementLog.closeFile()
-            del self.measurementLog
+            self.measurementLog = None
             self.ui.butFileGraphImport.setText("-")
             self.ui.butFile.setText("-")
             self.ui.butFile.setEnabled(True)
@@ -383,7 +392,7 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.ui.butClear.setEnabled(False)
                 self.data = self.measurementLog.readLog()
                 self.updatePlot()
-                
+
             else:
                 self.fileGraphOpen = False
                 del self.filePathGraph
@@ -438,7 +447,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.sensor.ser.reset_input_buffer()
         self.ui.butSave.setEnabled(False)
         if not self.fileOpen:
-                self.ui.butFileGraphImport.setEnabled(True)
+            self.ui.butFileGraphImport.setEnabled(True)
 
     def butReGauge(self) -> None:
         """
@@ -617,7 +626,6 @@ class ForceSensorGUI():
         """
         ####### SOME PARAMETERS AND STUFF ######
 
-        import serial
         self.ui = ui
         # The 'zero' count value. Determined automatically each time if 0.
         self.GaugeValue: int = int(self.ui.setGaugeValue.text())
@@ -629,7 +637,7 @@ class ForceSensorGUI():
         self.encoding: str = kwargs.pop('encoding', "UTF-8")
 
         self.baudrate: int = kwargs.pop('baudrate', 57600)
-        self.timeout: float = kwargs.pop('timeout', 2)
+        self.timeout: float = kwargs.pop('timeout', 2.)
 
         # M5Din Meter only gives back values with 6 decimals max
         self.gaugeRound: int = 6
@@ -638,7 +646,7 @@ class ForceSensorGUI():
 
         self.T0 = perf_counter_ns()
 
-        self.PortName: str = self.ui.setPortName.text()
+        self.PortName: str = self.ui.setPortName.text().upper()
 
         ####### PORT INIT ######
         # The 'COM'-port depends on which plug is used at the back of the computer.
@@ -646,7 +654,8 @@ class ForceSensorGUI():
         # and click the tab "Ports (COM&LPT)".
         self.ser = serial.Serial(self.PortName,
                                  baudrate=self.baudrate,
-                                 timeout=self.timeout)
+                                 timeout=self.timeout
+                                )
 
         # Test whether we are receiving any data or not.
         try:
@@ -660,15 +669,15 @@ class ForceSensorGUI():
 
         except UnicodeDecodeError as e:
             print("""
-                could not decode incoming data!\n
-                Connection maintained for debugging.\n
-                Data: 
-                """,
-                  line,
-                  """\n
-                Decoded: 
-                """ + str(line.decode(self.encoding, errors="replace"))
-                  )
+could not decode incoming data!
+Connection maintained for debugging.
+Data: 
+""",
+line,
+"""
+Decoded: 
+""" + str(line.decode(self.encoding, errors="replace"))
+)
 
     def reGauge(self):
         """
