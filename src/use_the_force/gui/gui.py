@@ -22,9 +22,6 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.measurementLog = None
-        self.butConnectToggle: bool = False
-        self.threadReachedEnd = False
         self.ui.error = self.error
 
         self.ui.butConnect.pressed.connect(self.butConnect)
@@ -38,6 +35,9 @@ class UserInterface(QtWidgets.QMainWindow):
             self.updatePlotTimerInterval)
         self.ui.butFileGraphImport.pressed.connect(self.butFileGraph)
 
+        self.measurementLog = None
+        self.butConnectToggle: bool = False
+        self.threadReachedEnd = False
         self.recording: bool = False
         self.fileGraphOpen: bool = False
         self.fileOpen: bool = False
@@ -234,7 +234,6 @@ class UserInterface(QtWidgets.QMainWindow):
 
         else:
             if self.ui.setPortName.text().upper() in [port.device for port in list_ports.comports()]:
-                # Gets enabled again at the end of the thread
                 self.butConnectToggle = True
                 self.ui.butFile.setEnabled(False)
                 self.startsensorConnect = threading.Thread(
@@ -259,10 +258,9 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butReGauge.setEnabled(True)
             self.ui.butRecord.setEnabled(True)
             self.ui.butConnect.setText("Connected")
-            if self.measurementLog == None:
+            if not self.fileOpen:
                 self.butClear()
-            else:
-                self.ui.butFile.setEnabled(True)
+            self.ui.butFile.setEnabled(True)
 
             self.ui.butConnect.setChecked(True)
 
@@ -292,6 +290,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butConnect.setText("Connect")
         self.ui.butConnect.setEnabled(True)
         self.ui.butConnect.setChecked(False)
+        del self.sensor
 
     def error(self, errorType: str, errorText: str) -> None:
         """
@@ -316,7 +315,7 @@ class UserInterface(QtWidgets.QMainWindow):
         """
         if self.fileOpen:
             self.fileOpen = False
-            self.ui.butFile.setChecked(True)
+            self.ui.butFile.setChecked(False)
             self.measurementLog.closeFile()
             self.measurementLog = None
             self.ui.butFile.setText("-")
@@ -326,7 +325,7 @@ class UserInterface(QtWidgets.QMainWindow):
 
         else:
             self.fileOpen = True
-            # self.ui.butFile.setChecked(True)
+            self.ui.butFile.setChecked(True)
             if hasattr(self, 'filePath'):
                 if self.filePath != "":
                     self.oldFilepath = self.filePath
@@ -448,6 +447,8 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butSave.setEnabled(False)
         if not self.fileOpen:
             self.ui.butFileGraphImport.setEnabled(True)
+        else:
+            self.butFile()
 
     def butReGauge(self) -> None:
         """
@@ -557,14 +558,7 @@ class mainLogWorker(QObject, QRunnable):
         if not self.logLess:
             self.callerSelf.data = self.callerSelf.measurementLog.readLog(
                 filename=self.callerSelf.filePath)
-
-        if len(self.callerSelf.data[0]) == 0:
-            time: float = 0.
-            self.callerSelf.sensor.T0 = perf_counter_ns()
-        else:
-            time: float = self.callerSelf.data[0][-1]
-            self.callerSelf.sensor.T0 = perf_counter_ns() - int(time*1e9+0.5)
-
+            
         # a time of `-1` will be seen as infinit and function will keep reading
         if float(self.callerSelf.ui.setTime.text()) >= 0. and self.callerSelf.ui.setTime.text() != "-1":
             measurementTime = float(self.callerSelf.ui.setTime.text())*1e9
@@ -573,6 +567,13 @@ class mainLogWorker(QObject, QRunnable):
             self.callerSelf.ui.setTime.setText("-1")
 
         self.startSignal.emit()
+
+        if len(self.callerSelf.data[0]) == 0:
+            time: float = 0.
+            self.callerSelf.sensor.T0 = perf_counter_ns()
+        else:
+            time: float = self.callerSelf.data[0][-1]
+            self.callerSelf.sensor.T0 = perf_counter_ns() - int(time*1e9+0.5)
 
         while (time < measurementTime or measurementTime == -1*1e9) and self.callerSelf.recording:
             # time in nanoseconds, force reading from sensor
