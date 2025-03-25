@@ -1,7 +1,7 @@
 import sys
 from time import perf_counter_ns, sleep
 from PySide6 import QtWidgets
-from PySide6.QtCore import Slot, Signal, QTimer, QThread, QObject, QRunnable, QThreadPool, Signal
+from PySide6.QtCore import Signal, QTimer, QObject, QRunnable, QThreadPool, Signal
 from PySide6.QtGui import QCloseEvent
 import pyqtgraph as pg
 import threading
@@ -10,6 +10,12 @@ import serial
 from serial.tools import list_ports
 from .main_ui import Ui_MainWindow
 from .error_ui import Ui_errorWindow
+
+if sys.version_info[:2] >= (3, 11):
+    from typing import Self
+elif sys.version_info[:2] >= (3, 10):
+    from typing_extensions import Self
+
 
 from ..logging import Logging
 
