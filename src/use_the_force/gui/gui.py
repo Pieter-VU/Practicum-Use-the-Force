@@ -326,10 +326,9 @@ class UserInterface(QtWidgets.QMainWindow):
         else:
             self.fileOpen = True
             self.ui.butFile.setChecked(True)
-            if hasattr(self, 'filePath'):
-                if self.filePath != "":
-                    self.oldFilepath = self.filePath
-            # self.filePath, _ = QtWidgets.QFileDialog.getSaveFileName(filter="CSV files (*.csv)", options=QtWidgets.QFileDialog.DontConfirmOverwrite)
+            # if hasattr(self, 'filePath'):
+            #     if self.filePath != "":
+            #         self.oldFilepath = self.filePath
             self.filePath, _ = QtWidgets.QFileDialog.getSaveFileName(
                 filter="CSV files (*.csv)")
             if self.filePath != "":
@@ -345,15 +344,16 @@ class UserInterface(QtWidgets.QMainWindow):
                     self.thread_pool.start(self.saveToLog.run)
                 
                 # Honestly, I forgot what this was for.
-                # Probably fixed a bug at some point
-            elif hasattr(self, "oldFilepath"):
-                self.filePath = self.oldFilepath
-                del self.oldFilepath
-                self.measurementLog = Logging(self.filePath)
-                self.measurementLog.createLogGUI()
-                self.ui.butFileGraphImport.setEnabled(False)
-                self.ui.butFileGraphImport.setText(
-                    f"Close File: {"".join(*self.filePath.split("/")[-1].split(".")[:-1])}")
+                # Probably fixed a bug at some point, 
+                # but seems to do more harm than good now
+            # elif hasattr(self, "oldFilepath"):
+            #     self.filePath = self.oldFilepath
+            #     del self.oldFilepath
+            #     self.measurementLog = Logging(self.filePath)
+            #     self.measurementLog.createLogGUI()
+            #     self.ui.butFileGraphImport.setEnabled(False)
+            #     self.ui.butFileGraphImport.setText(
+            #         f"Close File: {"".join(*self.filePath.split("/")[-1].split(".")[:-1])}")
             else:
                 self.fileOpen = False
                 self.ui.butFile.setText("-")
