@@ -340,6 +340,11 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.ui.butFileGraphImport.setEnabled(False)
                 self.ui.butFileGraphImport.setText(
                     f"Close File: {"".join(*self.filePath.split("/")[-1].split(".")[:-1])}")
+                if self.data[0]>0:
+                    self.ui.butSave.setEnabled(False)
+                    self.thread_pool.start(self.saveToLog.run)
+                
+                # Honestly, I forgot what this was for.
             elif hasattr(self, "oldFilepath"):
                 self.filePath = self.oldFilepath
                 del self.oldFilepath
