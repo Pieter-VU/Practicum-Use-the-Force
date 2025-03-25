@@ -11,12 +11,6 @@ from serial.tools import list_ports
 from .main_ui import Ui_MainWindow
 from .error_ui import Ui_errorWindow
 
-if sys.version_info[:2] >= (3, 11):
-    from typing import Self
-elif sys.version_info[:2] >= (3, 10):
-    from typing_extensions import Self
-
-
 from ..logging import Logging
 
 
@@ -561,7 +555,7 @@ class mainLogWorker(QObject, QRunnable):
     startSignal = Signal()
     endSignal = Signal()
 
-    def __init__(self, callerSelf):
+    def __init__(self, callerSelf: UserInterface):
         super().__init__()
         self.callerSelf = callerSelf
         self.logLess = bool()
@@ -620,7 +614,7 @@ class saveToLog(QObject, QRunnable):
     startSignal = Signal()
     endSignal = Signal()
 
-    def __init__(self, callerSelf):
+    def __init__(self, callerSelf: UserInterface):
         super().__init__()
         self.callerSelf = callerSelf
 
@@ -631,7 +625,7 @@ class saveToLog(QObject, QRunnable):
 
 
 class ForceSensorGUI():
-    def __init__(self, ui, WarningOn: bool = False, **kwargs) -> None:
+    def __init__(self, ui: UserInterface.ui, WarningOn: bool = False, **kwargs) -> None:
         """
         Opens up the serial port, checks the gauge value and makes sure data is available.
 
