@@ -34,6 +34,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.setPlotTimerInterval.textEdited.connect(
             self.updatePlotTimerInterval)
         self.ui.butFileGraphImport.pressed.connect(self.butFileGraph)
+        self.ui.butSingleRead.pressed.connect(self.butSingleRead)
 
         self.measurementLog = None
         self.butConnectToggle: bool = False
@@ -57,13 +58,17 @@ class UserInterface(QtWidgets.QMainWindow):
         self.mainLogWorker = mainLogWorker(self)
         self.mainLogWorker.startSignal.connect(self.startPlotTimer)
         self.mainLogWorker.endSignal.connect(self.stopPlotTimer)
+
         self.saveToLog = saveToLog(self)
         self.saveToLog.startSignal.connect(self.startPlotTimer)
         self.saveToLog.endSignal.connect(self.stopPlotTimer)
-        self.thread_pool = QThreadPool.globalInstance()
+
         self.singleReadWorker = singleReadWorker(self)
         # self.singleReadWorker.startSignal.connect()
-        self.singleReadWorker.endSignal.connect()
+        self.singleReadWorker.endSignal.connect(self.singleReadEnd)
+
+        self.thread_pool = QThreadPool.globalInstance()
+        
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -267,6 +272,7 @@ class UserInterface(QtWidgets.QMainWindow):
             if not self.fileOpen:
                 self.butClear()
             self.ui.butFile.setEnabled(True)
+            self.ui.butSingleRead.setEnabled(True)
 
             self.ui.butConnect.setChecked(True)
 
@@ -289,6 +295,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.butRecord()
         self.ui.butRecord.setEnabled(False)
         self.ui.butReGauge.setEnabled(False)
+        self.ui.butSingleRead.setEnabled(False)
         self.sensor.ClosePort()
         # Give some time to Windows/ M5Din Meter to fully disconnect
         sleep(0.5)
@@ -422,6 +429,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setEnabled(True)
             self.ui.butReGauge.setEnabled(True)
             self.ui.butSave.setEnabled(True)
+            self.ui.butSingleRead.setEnabled(True)
             # if not self.threadReachedEnd:
             #     if self.ui.butFile.text() != "-":
             #         self.startMainLog.join()
@@ -437,6 +445,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butFile.setEnabled(False)
             self.ui.butReGauge.setEnabled(False)
             self.ui.butSave.setEnabled(False)
+            self.ui.butSingleRead.setEnabled(False)
             self.ui.butFileGraphImport.setEnabled(False)
             self.sensor.ser.reset_input_buffer()
             if self.ui.butFile.text() != "-":
@@ -521,10 +530,15 @@ class UserInterface(QtWidgets.QMainWindow):
         self.callerSelf.butFile()
 
     def butSingleRead(self):
-        self.thread_pool.start(self.singleReadWorker)
+        self.ui.butSingleRead.setEnabled(False)
+        self.ui.butRecord.setEnabled(False)
+        self.ui.butConnect.setEnabled(False)
+        self.thread_pool.start(self.singleReadWorker.run)
 
     def singleReadEnd(self):
-        ...
+        self.ui.butSingleRead.setEnabled(True)
+        self.ui.butRecord.setEnabled(True)
+        self.ui.butConnect.setEnabled(True)
 
 
     def xLimSlider(self) -> None:
@@ -651,10 +665,11 @@ class singleReadWorker(QObject, QRunnable):
         forces = [self.callerSelf.sensor.ForceFix(self.callerSelf.sensor.GetReading()[1]) for i in range(0, self.callerSelf.singleReadForces)]
         self.callerSelf.singleReadForce = sum(forces)/self.callerSelf.singleReadForces
         self.endSignal.emit()
+        self.callerSelf.ui.butSingleRead.setText("{:.5f}".format(self.callerSelf.singleReadForce))
 
 
 class ForceSensorGUI():
-    def __init__(self, ui: UserInterface.ui, WarningOn: bool = False, **kwargs) -> None:
+    def __init__(self, ui, WarningOn: bool = False, **kwargs) -> None:
         """
         Opens up the serial port, checks the gauge value and makes sure data is available.
 
