@@ -215,8 +215,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>116</width>
+         <height>287</height>
         </rect>
        </property>
        <attribute name="label">
@@ -496,9 +496,9 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>1</x>
        <y>39</y>
-       <width>120</width>
+       <width>115</width>
        <height>24</height>
       </rect>
      </property>
@@ -515,9 +515,9 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>0</x>
-       <y>130</y>
-       <width>120</width>
+       <x>1</x>
+       <y>129</y>
+       <width>115</width>
        <height>24</height>
       </rect>
      </property>
@@ -531,9 +531,9 @@
     <widget class="QLabel" name="timeLabel">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>1</x>
        <y>-1</y>
-       <width>120</width>
+       <width>115</width>
        <height>20</height>
       </rect>
      </property>
@@ -544,9 +544,9 @@
     <widget class="QLineEdit" name="setTime">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>1</x>
        <y>19</y>
-       <width>120</width>
+       <width>115</width>
        <height>20</height>
       </rect>
      </property>
@@ -560,9 +560,9 @@
      </property>
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>1</x>
        <y>87</y>
-       <width>120</width>
+       <width>115</width>
        <height>24</height>
       </rect>
      </property>
@@ -573,14 +573,46 @@
     <widget class="QPushButton" name="butClear">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>1</x>
        <y>63</y>
-       <width>120</width>
+       <width>115</width>
        <height>24</height>
       </rect>
      </property>
      <property name="text">
       <string>Clear</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="butSingleRead">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>1</x>
+       <y>339</y>
+       <width>115</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0.0</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="timeLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>1</x>
+       <y>319</y>
+       <width>115</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Single read (mN)</string>
      </property>
     </widget>
    </widget>
