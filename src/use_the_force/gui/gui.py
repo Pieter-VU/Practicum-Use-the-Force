@@ -41,6 +41,9 @@ class UserInterface(QtWidgets.QMainWindow):
         self.recording: bool = False
         self.fileGraphOpen: bool = False
         self.fileOpen: bool = False
+        self.singleReadForce: float = float()
+        self.singleReadForces: int = 10
+        self.singleReadSkips: int = 10
         self.data = [[], []]
 
         self.plot(clrBg="default")
@@ -58,6 +61,9 @@ class UserInterface(QtWidgets.QMainWindow):
         self.saveToLog.startSignal.connect(self.startPlotTimer)
         self.saveToLog.endSignal.connect(self.stopPlotTimer)
         self.thread_pool = QThreadPool.globalInstance()
+        self.singleReadWorker = singleReadWorker(self)
+        # self.singleReadWorker.startSignal.connect()
+        self.singleReadWorker.endSignal.connect()
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -514,6 +520,13 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butSave.setText("Save")
         self.callerSelf.butFile()
 
+    def butSingleRead(self):
+        self.thread_pool.start(self.singleReadWorker)
+
+    def singleReadEnd(self):
+        ...
+
+
     def xLimSlider(self) -> None:
         """
         Changes lineEdit text based on slider position
@@ -624,6 +637,22 @@ class saveToLog(QObject, QRunnable):
         self.endSignal.emit()
 
 
+class singleReadWorker(QObject, QRunnable):
+    startSignal = Signal()
+    endSignal = Signal()
+
+    def __init__(self, callerSelf: UserInterface):
+        super().__init__()
+        self.callerSelf = callerSelf
+
+    def run(self):
+        self.startSignal.emit()
+        _skip = [self.callerSelf.sensor.GetReading()[1] for i in range(0, self.callerSelf.singleReadSkips)]
+        forces = [self.callerSelf.sensor.ForceFix(self.callerSelf.sensor.GetReading()[1]) for i in range(0, self.callerSelf.singleReadForces)]
+        self.callerSelf.singleReadForce = sum(forces)/self.callerSelf.singleReadForces
+        self.endSignal.emit()
+
+
 class ForceSensorGUI():
     def __init__(self, ui: UserInterface.ui, WarningOn: bool = False, **kwargs) -> None:
         """
@@ -718,6 +747,8 @@ Decoded:
         """
         Calculates the force based on `self.GaugeValue` and self.`NewtonPerCount`
 
+        :param x: input value/ measured count
+        :type x: float
         :returns: calculated force
         :rtype: float
         """
