@@ -42,6 +42,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butFileMDM.pressed.connect(self.butFileMDM)
         self.ui.setLineReadsMDM.valueChanged.connect(self.singleReadLinesForcesUpdate)
         self.ui.setLineSkipsMDM.valueChanged.connect(self.singleReadSkipsUpdate)
+        self.ui.setStepSizeMDM.valueChanged.connect(self.singleReadStepUpdate)
 
         self.measurementLog = None
         self.butConnectToggle: bool = False
