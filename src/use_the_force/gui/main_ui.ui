@@ -528,7 +528,7 @@
       <rect>
        <x>1</x>
        <y>39</y>
-       <width>115</width>
+       <width>118</width>
        <height>24</height>
       </rect>
      </property>
@@ -547,7 +547,7 @@
       <rect>
        <x>1</x>
        <y>129</y>
-       <width>115</width>
+       <width>118</width>
        <height>24</height>
       </rect>
      </property>
@@ -563,7 +563,7 @@
       <rect>
        <x>1</x>
        <y>-1</y>
-       <width>115</width>
+       <width>118</width>
        <height>20</height>
       </rect>
      </property>
@@ -576,7 +576,7 @@
       <rect>
        <x>1</x>
        <y>19</y>
-       <width>115</width>
+       <width>118</width>
        <height>20</height>
       </rect>
      </property>
@@ -592,7 +592,7 @@
       <rect>
        <x>1</x>
        <y>87</y>
-       <width>115</width>
+       <width>118</width>
        <height>24</height>
       </rect>
      </property>
@@ -605,7 +605,7 @@
       <rect>
        <x>1</x>
        <y>63</y>
-       <width>115</width>
+       <width>118</width>
        <height>24</height>
       </rect>
      </property>
@@ -621,7 +621,7 @@
       <rect>
        <x>1</x>
        <y>279</y>
-       <width>115</width>
+       <width>118</width>
        <height>40</height>
       </rect>
      </property>
@@ -634,7 +634,7 @@
       <rect>
        <x>1</x>
        <y>259</y>
-       <width>115</width>
+       <width>118</width>
        <height>20</height>
       </rect>
      </property>
@@ -650,7 +650,7 @@
       <rect>
        <x>0</x>
        <y>339</y>
-       <width>115</width>
+       <width>118</width>
        <height>40</height>
       </rect>
      </property>
@@ -687,7 +687,7 @@ Displacement Mode</string>
    <widget class="QLabel" name="buttonsLabel">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>721</x>
       <y>0</y>
       <width>120</width>
       <height>20</height>
