@@ -733,7 +733,7 @@ Displacement Mode</string>
     <property name="autoFillBackground">
      <bool>true</bool>
     </property>
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="labMDM">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -749,7 +749,7 @@ Displacement Mode</string>
       <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="butReadForceMDM">
      <property name="geometry">
       <rect>
        <x>120</x>
@@ -1029,7 +1029,7 @@ Displacement Mode</string>
       </property>
      </widget>
     </widget>
-    <widget class="QTextBrowser" name="textPreviousResults">
+    <widget class="QTextBrowser" name="textPreviousResultsMDM">
      <property name="geometry">
       <rect>
        <x>359</x>
@@ -1064,11 +1064,28 @@ Displacement Mode</string>
       <enum>QFrame::Shadow::Sunken</enum>
      </property>
     </widget>
+    <widget class="QPushButton" name="butSwitchDirectionMDM">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>1</x>
+       <y>319</y>
+       <width>118</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Switch Direction</string>
+     </property>
+    </widget>
     <zorder>graphMDM</zorder>
-    <zorder>label</zorder>
-    <zorder>pushButton</zorder>
+    <zorder>labMDM</zorder>
+    <zorder>butReadForceMDM</zorder>
     <zorder>extraSettingsBoxMDM</zorder>
-    <zorder>textPreviousResults</zorder>
+    <zorder>textPreviousResultsMDM</zorder>
+    <zorder>butSwitchDirectionMDM</zorder>
    </widget>
    <zorder>MDM</zorder>
    <zorder>settings</zorder>
