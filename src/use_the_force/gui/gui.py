@@ -21,7 +21,7 @@ class UserInterface(QtWidgets.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-
+        self.ui.MDM.setVisible(False)
         self.ui.error = self.error
 
         self.ui.butConnect.pressed.connect(self.butConnect)
@@ -35,6 +35,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.updatePlotTimerInterval)
         self.ui.butFileGraphImport.pressed.connect(self.butFileGraph)
         self.ui.butSingleRead.pressed.connect(self.butSingleRead)
+        self.ui.butSwitchManual.pressed.connect(self.butSwitchMDM)
 
         self.measurementLog = None
         self.butConnectToggle: bool = False
@@ -42,6 +43,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.recording: bool = False
         self.fileGraphOpen: bool = False
         self.fileOpen: bool = False
+        self.manualDisplacementModeActive: bool = False
         self.singleReadForce: float = float()
         self.singleReadForces: int = 10
         self.singleReadSkips: int = 10
@@ -539,6 +541,31 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butSingleRead.setEnabled(True)
         self.ui.butRecord.setEnabled(True)
         self.ui.butConnect.setEnabled(True)
+
+    def butSwitchMDM(self):
+        self.butClear()
+        if self.manualDisplacementModeActive:
+            self.manualDisplacementModeActive = False
+            self.ui.centerGraph.setVisible(True)
+            self.ui.MDM.setVisible(False)
+        else:
+            self.manualDisplacementModeActive = True
+            self.ui.centerGraph.setVisible(False)
+            self.ui.MDM.setVisible(True)
+    
+    def plotMDM(self, **kwargs):
+        pg.setConfigOption("foreground", kwargs.pop("clrFg", "k"))
+        pg.setConfigOption("background", kwargs.pop("clrBg", "w"))
+        # self.ui.graphMDM.setBackground(background=kwargs.pop("clrBg", "w"))
+        self.ui.graphMDM.plot(
+            *self.data,
+            symbol=kwargs.pop("symbol", None),
+            pen={
+                "color": kwargs.pop("color", "r"),
+                "width": kwargs.pop("linewidth", 5)
+            }
+        )
+
 
 
     def xLimSlider(self) -> None:
