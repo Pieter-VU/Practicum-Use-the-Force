@@ -21,7 +21,10 @@ class UserInterface(QtWidgets.QMainWindow):
 
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        # disable MDM until switched
         self.ui.MDM.setVisible(False)
+        self.ui.MDM.setEnabled(False)
+        # new variable for use later
         self.ui.error = self.error
 
         self.ui.butConnect.pressed.connect(self.butConnect)
@@ -48,6 +51,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.singleReadForces: int = 10
         self.singleReadSkips: int = 10
         self.data = [[], []]
+        self.data2 = [[], []]
 
         self.plot(clrBg="default")
         self.plotMDM()
@@ -71,7 +75,6 @@ class UserInterface(QtWidgets.QMainWindow):
         self.singleReadWorker.endSignal.connect(self.singleReadEnd)
 
         self.thread_pool = QThreadPool.globalInstance()
-        
 
     def closeEvent(self, event: QCloseEvent) -> None:
         """
@@ -124,13 +127,15 @@ class UserInterface(QtWidgets.QMainWindow):
         )
 
         self.updatePlotLabel(
-            kwargs.pop("label1loc", "left"),
-            kwargs.pop("label1txt", self.ui.yLabel.text())
+            graph=self.ui.graph1,
+            labelLoc=kwargs.pop("label1loc", "left"),
+            labelTxt=kwargs.pop("label1txt", self.ui.yLabel.text())
         )
 
         self.updatePlotLabel(
-            kwargs.pop("label2loc", "bottom"),
-            kwargs.pop("label2txt", self.ui.xLabel.text())
+            graph=self.ui.graph1,
+            labelLoc=kwargs.pop("label2loc", "bottom"),
+            labelTxt=kwargs.pop("label2txt", self.ui.xLabel.text())
         )
 
         self.ui.yLabel.textChanged.connect(self.updatePlotYLabel)
@@ -170,31 +175,29 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.ui.graph1.setXRange(0, self.data[0][-1])
                 self.ui.graph1.setYRange(min(self.data[1]), max(self.data[1]))
 
-    def updatePlotLabel(self, labelLoc: str, labelTxt: str) -> None:
+    def updatePlotLabel(self, graph, labelLoc: str, labelTxt: str) -> None:
         """
         Updates the label
 
+        :param graph: what graph to update
+        :type PlotWidget:
         :param labelLoc: label location
         :type labelLoc: str
         :param labelTxt: label text
         :type labelTxt: str
         """
-        self.ui.graph1.setLabel(
+        graph.setLabel(
             labelLoc,
             labelTxt
         )
 
-        # match labelLoc:
-        #     case "top": self.ui.graph1.setLabel("bottom")
-        #     case "bottom": self.ui.graph1.setLabel("top")
-        #     case "left": self.ui.graph1.setLabel("right")
-        #     case "right": self.ui.graph1.setLabel("left")
-
     def updatePlotYLabel(self) -> None:
-        self.updatePlotLabel(labelLoc="left", labelTxt=self.ui.yLabel.text())
+        self.updatePlotLabel(graph=self.ui.graph1,
+                             labelLoc="left", labelTxt=self.ui.yLabel.text())
 
     def updatePlotXLabel(self) -> None:
-        self.updatePlotLabel(labelLoc="bottom", labelTxt=self.ui.xLabel.text())
+        self.updatePlotLabel(graph=self.ui.graph1,
+                             labelLoc="bottom", labelTxt=self.ui.xLabel.text())
 
     def updatePlotTimerInterval(self) -> None:
         tmp = self.ui.setPlotTimerInterval.text()
@@ -239,6 +242,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.startsensorDisonnect = threading.Thread(
                 target=self.sensorDisconnect)
             self.startsensorDisonnect.start()
+            self.ui.setPortName.setEnabled(True)
 
         else:
             if self.ui.setPortName.text().upper() in [port.device for port in list_ports.comports()]:
@@ -248,7 +252,8 @@ class UserInterface(QtWidgets.QMainWindow):
                     target=self.sensorConnect)
                 self.startsensorConnect.start()
             else:
-                self.error("Port not found", f"Port: {self.ui.setPortName.text().upper()} was not detected!")
+                self.error(
+                    "Port not found", f"Port: {self.ui.setPortName.text().upper()} was not detected!")
                 self.ui.butConnect.setText("Connect")
                 self.butConnectToggle = False
                 self.ui.butConnect.setEnabled(True)
@@ -272,6 +277,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butSingleRead.setEnabled(True)
 
             self.ui.butConnect.setChecked(True)
+            self.ui.setPortName.setEnabled(False)
 
         except Exception as e:
             self.error(e.__class__.__name__, e.args[0])
@@ -332,6 +338,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.butClear()
             self.ui.butFileGraphImport.setEnabled(True)
             self.ui.butFileGraphImport.setText("-")
+            self.ui.butSwitchManual.setEnabled(True)
 
         else:
             self.fileOpen = True
@@ -352,9 +359,10 @@ class UserInterface(QtWidgets.QMainWindow):
                 if len(self.data[0]) > 0:
                     self.ui.butSave.setEnabled(False)
                     self.thread_pool.start(self.saveToLog.run)
-                
+                self.ui.butSwitchManual.setEnabled(False)
+
                 # Honestly, I forgot what this was for.
-                # Probably fixed a bug at some point, 
+                # Probably fixed a bug at some point,
                 # but seems to do more harm than good now
             # elif hasattr(self, "oldFilepath"):
             #     self.filePath = self.oldFilepath
@@ -389,9 +397,11 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.ui.butRecord.setEnabled(True)
             self.ui.butClear.setEnabled(True)
             self.butClear()
+            self.ui.butSwitchManual.setEnabled(True)
 
         else:
             self.fileGraphOpen = True
+            self.ui.butSwitchManual.setEnabled(False)
             self.filePathGraph, _ = QtWidgets.QFileDialog.getOpenFileName(
                 filter="CSV files (*.csv)")
 
@@ -427,6 +437,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butReGauge.setEnabled(True)
             self.ui.butSave.setEnabled(True)
             self.ui.butSingleRead.setEnabled(True)
+            self.ui.butSwitchManual.setEnabled(True)
             # if not self.threadReachedEnd:
             #     if self.ui.butFile.text() != "-":
             #         self.startMainLog.join()
@@ -444,6 +455,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butSave.setEnabled(False)
             self.ui.butSingleRead.setEnabled(False)
             self.ui.butFileGraphImport.setEnabled(False)
+            self.ui.butSwitchManual.setEnabled(False)
             self.sensor.ser.reset_input_buffer()
             if self.ui.butFile.text() != "-":
                 self.mainLogWorker.logLess = False
@@ -542,13 +554,34 @@ class UserInterface(QtWidgets.QMainWindow):
         self.butClear()
         if self.manualDisplacementModeActive:
             self.manualDisplacementModeActive = False
+            # visibility
             self.ui.centerGraph.setVisible(True)
             self.ui.MDM.setVisible(False)
+
+            # main ui buttons
+            self.ui.logOptions.setEnabled(True)
+            self.ui.graphOptions.setEnabled(True)
+            self.ui.butClear.setEnabled(True)
+
+            # MDM
+            self.ui.MDM.setEnabled(False)
+            
         else:
             self.manualDisplacementModeActive = True
+
+            # visibility
             self.ui.centerGraph.setVisible(False)
             self.ui.MDM.setVisible(True)
-    
+
+            # main ui buttons
+            self.ui.logOptions.setEnabled(False)
+            self.ui.graphOptions.setEnabled(False)
+            self.ui.butSave.setEnabled(False)
+            self.ui.butClear.setEnabled(False)
+
+            # MDM
+            self.ui.MDM.setEnabled(True)
+
     def plotMDM(self, **kwargs):
         pg.setConfigOption("foreground", kwargs.pop("clrFg", "k"))
         pg.setConfigOption("background", kwargs.pop("clrBg", "w"))
@@ -570,11 +603,21 @@ class UserInterface(QtWidgets.QMainWindow):
             kwargs.pop("labelxtxt", self.ui.xLabel_2.text())
         )
 
+        self.ui.yLabel_2.textChanged.connect(self.updatePlotYLabelMDM)
+        self.ui.xLabel_2.textChanged.connect(self.updatePlotXLabelMDM)
+
+    def updatePlotYLabelMDM(self) -> None:
+        self.updatePlotLabel(graph=self.ui.graphMDM,
+                             labelLoc="left", labelTxt=self.ui.yLabel_2.text())
+
+    def updatePlotXLabelMDM(self) -> None:
+        self.updatePlotLabel(graph=self.ui.graphMDM,
+                             labelLoc="bottom", labelTxt=self.ui.xLabel_2.text())
+
     def updatePlotMDM(self):
         self.ui.graphMDM.plot(
             *self.data,
         )
-
 
     def xLimSlider(self) -> None:
         """
@@ -626,7 +669,7 @@ class mainLogWorker(QObject, QRunnable):
         if not self.logLess:
             self.callerSelf.data = self.callerSelf.measurementLog.readLog(
                 filename=self.callerSelf.filePath)
-            
+
         # a time of `-1` will be seen as infinit and function will keep reading
         if float(self.callerSelf.ui.setTime.text()) >= 0. and self.callerSelf.ui.setTime.text() != "-1":
             measurementTime = float(self.callerSelf.ui.setTime.text())*1e9
@@ -696,9 +739,12 @@ class singleReadWorker(QObject, QRunnable):
 
     def run(self):
         self.startSignal.emit()
-        _skip = [self.callerSelf.sensor.GetReading()[1] for i in range(0, self.callerSelf.singleReadSkips)]
-        forces = [self.callerSelf.sensor.ForceFix(self.callerSelf.sensor.GetReading()[1]) for i in range(0, self.callerSelf.singleReadForces)]
-        self.callerSelf.singleReadForce = sum(forces)/self.callerSelf.singleReadForces
+        _skip = [self.callerSelf.sensor.GetReading()[1]
+                 for i in range(0, self.callerSelf.singleReadSkips)]
+        forces = [self.callerSelf.sensor.ForceFix(self.callerSelf.sensor.GetReading()[
+                                                  1]) for i in range(0, self.callerSelf.singleReadForces)]
+        self.callerSelf.singleReadForce = sum(
+            forces)/self.callerSelf.singleReadForces
         self.endSignal.emit()
 
 
@@ -740,7 +786,7 @@ class ForceSensorGUI():
         self.ser = serial.Serial(self.PortName,
                                  baudrate=self.baudrate,
                                  timeout=self.timeout
-                                )
+                                 )
 
         # Test whether we are receiving any data or not.
         try:
@@ -758,11 +804,11 @@ could not decode incoming data!
 Connection maintained for debugging.
 Data: 
 """,
-line,
-"""
+                  line,
+                  """
 Decoded: 
 """ + str(line.decode(self.encoding, errors="replace"))
-)
+            )
 
     def reGauge(self):
         """

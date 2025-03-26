@@ -72,9 +72,12 @@
        <enum>QFrame::Shape::Box</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="sensorOptions">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -223,6 +226,9 @@
        </widget>
       </widget>
       <widget class="QWidget" name="logOptions">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -265,6 +271,9 @@
        </widget>
       </widget>
       <widget class="QWidget" name="graphOptions">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -704,6 +713,9 @@ Displacement Mode</string>
     </property>
    </widget>
    <widget class="QWidget" name="MDM" native="true">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>121</x>
@@ -952,6 +964,9 @@ Displacement Mode</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="xLabel_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>1</x>
@@ -1044,13 +1059,18 @@ Displacement Mode</string>
       <enum>QFrame::Shadow::Sunken</enum>
      </property>
     </widget>
+    <zorder>graphMDM</zorder>
+    <zorder>label</zorder>
+    <zorder>pushButton</zorder>
+    <zorder>extraSettingsBoxMDM</zorder>
+    <zorder>textPreviousResults</zorder>
    </widget>
-   <zorder>centerGraph</zorder>
    <zorder>MDM</zorder>
    <zorder>settings</zorder>
    <zorder>rightWidget</zorder>
    <zorder>settingsLabel</zorder>
    <zorder>buttonsLabel</zorder>
+   <zorder>centerGraph</zorder>
   </widget>
  </widget>
  <customwidgets>
