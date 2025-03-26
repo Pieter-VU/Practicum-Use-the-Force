@@ -547,10 +547,13 @@ class UserInterface(QtWidgets.QMainWindow):
         self.thread_pool.start(self.singleReadWorker.run)
 
     def singleReadEnd(self):
-        self.ui.butSingleRead.setText("{:.5f}".format(self.singleReadForce))
-        self.ui.butSingleRead.setEnabled(True)
-        self.ui.butRecord.setEnabled(True)
-        self.ui.butConnect.setEnabled(True)
+        if self.manualDisplacementModeActive:
+            ...
+        else:
+            self.ui.butSingleRead.setText("{:.5f}".format(self.singleReadForce))
+            self.ui.butSingleRead.setEnabled(True)
+            self.ui.butRecord.setEnabled(True)
+            self.ui.butConnect.setEnabled(True)
 
     def butSwitchMDM(self):
         self.butClear()
