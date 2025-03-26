@@ -83,7 +83,7 @@ class UserInterface(QtWidgets.QMainWindow):
         if self.ui.butConnect.isChecked():
             self.butConnect()
 
-    def plot(self, data: list | None = None, **kwargs) -> None:
+    def plot(self, **kwargs) -> None:
         """
         Plots the data on the central plot.
 
@@ -109,22 +109,16 @@ class UserInterface(QtWidgets.QMainWindow):
         :param clrFg: color of the foreground, default: `"k"`
         :type clrFg: str
         """
-        if data == None:
-            data = [[], []]
 
         pg.setConfigOption("foreground", kwargs.pop("clrFg", "k"))
-        self.ui.graph1.setBackground(background=kwargs.pop("clrBg", "w"))
-        self.symbol = kwargs.pop("symbol", None)
-        self.color = kwargs.pop("color", "r")
-        self.linewidth = kwargs.pop("linewidth", 5)
-        self.xLim = float(self.ui.xLimSet.text())
-
+        pg.setConfigOption("background", kwargs.pop("clrBg", "w"))
+        # self.ui.graphMDM.setBackground(background=kwargs.pop("clrBg", "w"))
         self.ui.graph1.plot(
-            *data,
-            symbol=self.symbol,
+            *self.data,
+            symbol=kwargs.pop("symbol", None),
             pen={
-                "color": self.color,
-                "width": self.linewidth
+                "color": kwargs.pop("color", "r"),
+                "width": kwargs.pop("linewidth", 5)
             }
         )
 
@@ -538,6 +532,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.thread_pool.start(self.singleReadWorker.run)
 
     def singleReadEnd(self):
+        self.ui.butSingleRead.setText("{:.5f}".format(self.singleReadForce))
         self.ui.butSingleRead.setEnabled(True)
         self.ui.butRecord.setEnabled(True)
         self.ui.butConnect.setEnabled(True)
@@ -696,7 +691,6 @@ class singleReadWorker(QObject, QRunnable):
         forces = [self.callerSelf.sensor.ForceFix(self.callerSelf.sensor.GetReading()[1]) for i in range(0, self.callerSelf.singleReadForces)]
         self.callerSelf.singleReadForce = sum(forces)/self.callerSelf.singleReadForces
         self.endSignal.emit()
-        self.callerSelf.ui.butSingleRead.setText("{:.5f}".format(self.callerSelf.singleReadForce))
 
 
 class ForceSensorGUI():
