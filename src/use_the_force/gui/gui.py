@@ -570,13 +570,19 @@ class UserInterface(QtWidgets.QMainWindow):
 
     def singleReadSkipsUpdate(self):
         try:
-            self.singleReadSkips = float(self.ui.setLineSkipsMDM.text())
+            self.singleReadSkips = int(self.ui.setLineSkipsMDM.text())
         except ValueError:
             pass
 
     def singleReadLinesForcesUpdate(self):
         try:
-            self.singleReadForces = float(self.ui.setLineReadsMDM.text())
+            self.singleReadForces = int(self.ui.setLineReadsMDM.text())
+        except ValueError:
+            pass
+
+    def singleReadStepUpdate(self):
+        try:
+            self.stepSizeMDM = float(self.ui.setStepSizeMDM.text())
         except ValueError:
             pass
 
