@@ -756,7 +756,7 @@ Displacement Mode</string>
        <x>1</x>
        <y>20</y>
        <width>118</width>
-       <height>178</height>
+       <height>258</height>
       </rect>
      </property>
      <property name="font">
@@ -931,6 +931,81 @@ Displacement Mode</string>
       </property>
       <property name="value">
        <double>0.050000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="yLabelLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>173</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>y-label</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="xLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>233</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Displacement [mm]</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="yLabel_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>193</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Force [mN]</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="xLabelLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>213</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>x-label</string>
       </property>
      </widget>
     </widget>
