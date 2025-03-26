@@ -566,6 +566,10 @@ class UserInterface(QtWidgets.QMainWindow):
             }
         )
 
+    def updatePlotMDM(self):
+        self.ui.graphMDM.plot(
+            *self.data,
+        )
 
 
     def xLimSlider(self) -> None:
