@@ -51,6 +51,8 @@ class UserInterface(QtWidgets.QMainWindow):
         self.fileGraphOpen: bool = False
         self.fileOpen: bool = False
         self.fileMDMOpen: bool = False
+        self.readForceMDMToggle: bool = False
+        self.switchDirectionMDMToggle: bool = False
         self.manualDisplacementModeActive: bool = False
         self.singleReadForce: float = float()
         self.singleReadForces: int = 10
@@ -586,6 +588,26 @@ class UserInterface(QtWidgets.QMainWindow):
             self.stepSizeMDM = float(self.ui.setStepSizeMDM.text())
         except ValueError:
             pass
+
+    def readForceMDM(self):
+        if not self.readForceMDMToggle:
+            self.readForceMDMToggle = True
+            self.ui.butSwitchDirectionMDM.setEnabled(True)
+
+    def switchDirectionMDM(self):
+        if self.switchDirectionMDMToggle: 
+            self.switchDirectionMDMToggle = True
+            self.ui.butSwitchDirectionMDM.setText("Stop")
+            self.stepSizeMDM = -1*self.stepSizeMDM
+            self.switchDistance = self.data[0][-1]
+            self.data2 = self.data
+            del self.data
+            self.data = [[],[]]
+        else:
+            self.readForceMDMToggle = False
+            self.switchDirectionMDMToggle = False
+            self.ui.butSwitchDirectionMDM.setEnabled(False)
+            self.ui.butSwitchDirectionMDM.setText("Switch Direction")
 
     def butSwitchMDM(self):
         self.butClear()
