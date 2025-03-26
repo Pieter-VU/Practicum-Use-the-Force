@@ -530,6 +530,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.thread_pool.start(self.singleReadWorker.run)
 
     def singleReadEnd(self):
+        self.ui.butSingleRead.setText("{:.5f}".format(self.singleReadForce))
         self.ui.butSingleRead.setEnabled(True)
         self.ui.butRecord.setEnabled(True)
         self.ui.butConnect.setEnabled(True)
@@ -659,7 +660,6 @@ class singleReadWorker(QObject, QRunnable):
         forces = [self.callerSelf.sensor.ForceFix(self.callerSelf.sensor.GetReading()[1]) for i in range(0, self.callerSelf.singleReadForces)]
         self.callerSelf.singleReadForce = sum(forces)/self.callerSelf.singleReadForces
         self.endSignal.emit()
-        self.callerSelf.ui.butSingleRead.setText("{:.5f}".format(self.callerSelf.singleReadForce))
 
 
 class ForceSensorGUI():
