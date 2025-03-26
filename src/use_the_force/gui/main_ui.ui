@@ -620,7 +620,7 @@
     </widget>
     <widget class="QPushButton" name="butSwitchManual">
      <property name="enabled">
-      <bool>true</bool>
+      <bool>false</bool>
      </property>
      <property name="geometry">
       <rect>
@@ -638,9 +638,6 @@
      <property name="text">
       <string>Switch to Manual
 Displacement Mode</string>
-     </property>
-     <property name="checkable">
-      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -671,16 +668,16 @@ Displacement Mode</string>
     </property>
    </widget>
    <widget class="QWidget" name="MDM" native="true">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
     <property name="geometry">
      <rect>
-      <x>120</x>
+      <x>121</x>
       <y>0</y>
-      <width>600</width>
+      <width>598</width>
       <height>400</height>
      </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
     </property>
     <widget class="QLabel" name="label">
      <property name="geometry">
@@ -701,7 +698,7 @@ Displacement Mode</string>
     <widget class="QPushButton" name="pushButton">
      <property name="geometry">
       <rect>
-       <x>200</x>
+       <x>199</x>
        <y>319</y>
        <width>200</width>
        <height>80</height>
@@ -898,9 +895,9 @@ Displacement Mode</string>
     <widget class="QTextBrowser" name="textPreviousResults">
      <property name="geometry">
       <rect>
-       <x>401</x>
+       <x>400</x>
        <y>319</y>
-       <width>198</width>
+       <width>197</width>
        <height>80</height>
       </rect>
      </property>
