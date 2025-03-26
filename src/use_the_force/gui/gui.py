@@ -50,6 +50,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.data = [[], []]
 
         self.plot(clrBg="default")
+        self.plotMDM()
 
         # Plot timer interval in ms
         self.plotTimerInterval: int = 100
@@ -559,6 +560,14 @@ class UserInterface(QtWidgets.QMainWindow):
                 "color": kwargs.pop("color", "r"),
                 "width": kwargs.pop("linewidth", 5)
             }
+        )
+        self.ui.graphMDM.setLabel(
+            kwargs.pop("labelyloc", "left"),
+            kwargs.pop("labelytxt", self.ui.yLabel_2.text())
+        )
+        self.ui.graphMDM.setLabel(
+            kwargs.pop("labelxloc", "bottom"),
+            kwargs.pop("labelxtxt", self.ui.xLabel_2.text())
         )
 
     def updatePlotMDM(self):
