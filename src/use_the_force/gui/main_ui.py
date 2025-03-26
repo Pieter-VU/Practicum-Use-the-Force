@@ -244,6 +244,7 @@ class Ui_MainWindow(object):
         self.butFileMDM = QPushButton(self.extraSettingsBoxMDM)
         self.butFileMDM.setObjectName(u"butFileMDM")
         self.butFileMDM.setGeometry(QRect(1, 33, 113, 22))
+        self.butFileMDM.setFont(font)
         self.butFileMDM.setCheckable(True)
         self.labLineReadsMDM = QLabel(self.extraSettingsBoxMDM)
         self.labLineReadsMDM.setObjectName(u"labLineReadsMDM")

@@ -39,6 +39,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butFileGraphImport.pressed.connect(self.butFileGraph)
         self.ui.butSingleRead.pressed.connect(self.butSingleRead)
         self.ui.butSwitchManual.pressed.connect(self.butSwitchMDM)
+        self.ui.butFileMDM.pressed.connect(self.butFileMDM)
 
         self.measurementLog = None
         self.butConnectToggle: bool = False
@@ -46,6 +47,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.recording: bool = False
         self.fileGraphOpen: bool = False
         self.fileOpen: bool = False
+        self.fileMDMOpen: bool = False
         self.manualDisplacementModeActive: bool = False
         self.singleReadForce: float = float()
         self.singleReadForces: int = 10
@@ -331,7 +333,7 @@ class UserInterface(QtWidgets.QMainWindow):
         """
         if self.fileOpen:
             self.fileOpen = False
-            self.ui.butFile.setChecked(False)
+            self.ui.butFile.setChecked(True)
             self.measurementLog.closeFile()
             self.measurementLog = None
             self.ui.butFile.setText("-")
@@ -618,6 +620,36 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.graphMDM.plot(
             *self.data,
         )
+
+    def butFileMDM(self) -> None:
+        """
+        Function for what `butFileMDM` has to do.
+
+        - `if fileMDMOpen:` close file
+        - `else:` opens dialog box to select/ create a .csv file
+        """
+        if self.fileMDMOpen:
+            self.fileMDMOpen = False
+            self.ui.butFileMDM.setChecked(True)
+            self.measurementLog.closeFile()
+            self.measurementLog = None
+            self.ui.butFileMDM.setText("-")
+            self.butClear()
+            self.ui.butSwitchManual.setEnabled(True)
+
+        else:
+            self.filePath, _ = QtWidgets.QFileDialog.getSaveFileName(
+                filter="CSV files (*.csv)")
+            if self.filePath != "":
+                self.fileMDMOpen = True
+                self.ui.butFileMDM.setChecked(True)
+                self.measurementLog = Logging("".join(self.filePath.split(".")[:-1])+"_in.csv")
+                self.measurementLog.createLogGUI()
+                self.ui.butFileMDM.setText(
+                    *self.filePath.split("/")[-1].split(".")[:-1])
+                self.ui.butSwitchManual.setEnabled(False)
+            else:
+                self.ui.butFileMDM.setText("-")
 
     def xLimSlider(self) -> None:
         """
