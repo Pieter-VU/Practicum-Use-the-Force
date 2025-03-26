@@ -40,6 +40,8 @@ class UserInterface(QtWidgets.QMainWindow):
         self.ui.butSingleRead.pressed.connect(self.butSingleRead)
         self.ui.butSwitchManual.pressed.connect(self.butSwitchMDM)
         self.ui.butFileMDM.pressed.connect(self.butFileMDM)
+        self.ui.setLineReadsMDM.valueChanged.connect(self.singleReadLinesForcesUpdate)
+        self.ui.setLineSkipsMDM.valueChanged.connect(self.singleReadSkipsUpdate)
 
         self.measurementLog = None
         self.butConnectToggle: bool = False
@@ -52,6 +54,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.singleReadForce: float = float()
         self.singleReadForces: int = 10
         self.singleReadSkips: int = 10
+        self.stepSizeMDM: float = float()
         self.data = [[], []]
         self.data2 = [[], []]
 
@@ -541,6 +544,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.callerSelf.butFile()
 
     def butSingleRead(self):
+        self.singleReadToggle = True
         self.ui.butSingleRead.setEnabled(False)
         self.ui.butRecord.setEnabled(False)
         self.ui.butConnect.setEnabled(False)
@@ -548,12 +552,33 @@ class UserInterface(QtWidgets.QMainWindow):
 
     def singleReadEnd(self):
         if self.manualDisplacementModeActive:
-            ...
+            self.ui.butSingleRead.setEnabled(True)
+            self.data[0].append(self.data[0][-1]+self.stepSizeMDM)
+            self.data[1].append(self.singleReadForce)
+
+            if self.singleReadToggle:
+                self.ui.butSingleRead.setText("{:.5f}".format(self.singleReadForce))
+                self.singleReadToggle = False
+                
         else:
             self.ui.butSingleRead.setText("{:.5f}".format(self.singleReadForce))
             self.ui.butSingleRead.setEnabled(True)
             self.ui.butRecord.setEnabled(True)
-            self.ui.butConnect.setEnabled(True)
+            self.singleReadToggle = False
+
+        self.ui.butConnect.setEnabled(True)
+
+    def singleReadSkipsUpdate(self):
+        try:
+            self.singleReadSkips = float(self.ui.setLineSkipsMDM.text())
+        except ValueError:
+            pass
+
+    def singleReadLinesForcesUpdate(self):
+        try:
+            self.singleReadForces = float(self.ui.setLineReadsMDM.text())
+        except ValueError:
+            pass
 
     def butSwitchMDM(self):
         self.butClear()
