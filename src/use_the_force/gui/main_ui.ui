@@ -14,6 +14,12 @@
    <string>Use the Force!</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>840</width>
+     <height>400</height>
+    </size>
+   </property>
    <widget class="QScrollArea" name="settings">
     <property name="geometry">
      <rect>
@@ -22,6 +28,12 @@
       <width>120</width>
       <height>380</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>120</width>
+      <height>380</height>
+     </size>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::NoFrame</enum>
@@ -457,7 +469,7 @@
    </widget>
    <widget class="QWidget" name="centerGraph" native="true">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -467,9 +479,15 @@
       <height>400</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>600</width>
+      <height>400</height>
+     </size>
+    </property>
     <widget class="PlotWidget" name="graph1">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="geometry">
       <rect>
@@ -495,6 +513,12 @@
       <width>120</width>
       <height>380</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>120</width>
+      <height>380</height>
+     </size>
     </property>
     <widget class="QPushButton" name="butRecord">
      <property name="enabled">
@@ -620,7 +644,7 @@
     </widget>
     <widget class="QPushButton" name="butSwitchManual">
      <property name="enabled">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
      <property name="geometry">
       <rect>
@@ -650,6 +674,12 @@ Displacement Mode</string>
       <height>20</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>120</width>
+      <height>20</height>
+     </size>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -663,6 +693,12 @@ Displacement Mode</string>
       <height>20</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>120</width>
+      <height>20</height>
+     </size>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Buttons&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -675,6 +711,12 @@ Displacement Mode</string>
       <width>598</width>
       <height>400</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>598</width>
+      <height>400</height>
+     </size>
     </property>
     <property name="autoFillBackground">
      <bool>true</bool>
@@ -698,9 +740,9 @@ Displacement Mode</string>
     <widget class="QPushButton" name="pushButton">
      <property name="geometry">
       <rect>
-       <x>199</x>
+       <x>120</x>
        <y>319</y>
-       <width>200</width>
+       <width>238</width>
        <height>80</height>
       </rect>
      </property>
@@ -711,7 +753,7 @@ Displacement Mode</string>
     <widget class="QGroupBox" name="extraSettingsBoxMDM">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>1</x>
        <y>20</y>
        <width>118</width>
        <height>178</height>
@@ -895,9 +937,9 @@ Displacement Mode</string>
     <widget class="QTextBrowser" name="textPreviousResults">
      <property name="geometry">
       <rect>
-       <x>400</x>
+       <x>359</x>
        <y>319</y>
-       <width>197</width>
+       <width>238</width>
        <height>80</height>
       </rect>
      </property>
@@ -908,14 +950,39 @@ Displacement Mode</string>
       <bool>false</bool>
      </property>
     </widget>
+    <widget class="PlotWidget" name="graphMDM">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>20</y>
+       <width>477</width>
+       <height>298</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Sunken</enum>
+     </property>
+    </widget>
    </widget>
+   <zorder>centerGraph</zorder>
+   <zorder>MDM</zorder>
+   <zorder>settings</zorder>
+   <zorder>rightWidget</zorder>
+   <zorder>settingsLabel</zorder>
+   <zorder>buttonsLabel</zorder>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
    <class>PlotWidget</class>
    <extends>QGraphicsView</extends>
-   <header>pyqtgraph</header>
+   <header location="global">pyqtgraph</header>
   </customwidget>
  </customwidgets>
  <resources/>
