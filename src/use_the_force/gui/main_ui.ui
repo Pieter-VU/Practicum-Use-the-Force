@@ -14,6 +14,12 @@
    <string>Use the Force!</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>840</width>
+     <height>400</height>
+    </size>
+   </property>
    <widget class="QScrollArea" name="settings">
     <property name="geometry">
      <rect>
@@ -22,6 +28,12 @@
       <width>120</width>
       <height>380</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>120</width>
+      <height>380</height>
+     </size>
     </property>
     <property name="frameShape">
      <enum>QFrame::Shape::NoFrame</enum>
@@ -63,6 +75,9 @@
        <number>0</number>
       </property>
       <widget class="QWidget" name="sensorOptions">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -211,12 +226,15 @@
        </widget>
       </widget>
       <widget class="QWidget" name="logOptions">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>116</width>
+         <height>287</height>
         </rect>
        </property>
        <attribute name="label">
@@ -253,12 +271,15 @@
        </widget>
       </widget>
       <widget class="QWidget" name="graphOptions">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="geometry">
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>116</width>
+         <height>287</height>
         </rect>
        </property>
        <attribute name="label">
@@ -455,7 +476,10 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="graph" native="true">
+   <widget class="QWidget" name="centerGraph" native="true">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -464,7 +488,16 @@
       <height>400</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>600</width>
+      <height>400</height>
+     </size>
+    </property>
     <widget class="PlotWidget" name="graph1">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -481,7 +514,7 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="widget" native="true">
+   <widget class="QWidget" name="rightWidget" native="true">
     <property name="geometry">
      <rect>
       <x>720</x>
@@ -489,6 +522,12 @@
       <width>120</width>
       <height>380</height>
      </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>120</width>
+      <height>380</height>
+     </size>
     </property>
     <widget class="QPushButton" name="butRecord">
      <property name="enabled">
@@ -498,7 +537,7 @@
       <rect>
        <x>1</x>
        <y>39</y>
-       <width>115</width>
+       <width>118</width>
        <height>24</height>
       </rect>
      </property>
@@ -517,7 +556,7 @@
       <rect>
        <x>1</x>
        <y>129</y>
-       <width>115</width>
+       <width>118</width>
        <height>24</height>
       </rect>
      </property>
@@ -533,7 +572,7 @@
       <rect>
        <x>1</x>
        <y>-1</y>
-       <width>115</width>
+       <width>118</width>
        <height>20</height>
       </rect>
      </property>
@@ -546,7 +585,7 @@
       <rect>
        <x>1</x>
        <y>19</y>
-       <width>115</width>
+       <width>118</width>
        <height>20</height>
       </rect>
      </property>
@@ -562,7 +601,7 @@
       <rect>
        <x>1</x>
        <y>87</y>
-       <width>115</width>
+       <width>118</width>
        <height>24</height>
       </rect>
      </property>
@@ -575,7 +614,7 @@
       <rect>
        <x>1</x>
        <y>63</y>
-       <width>115</width>
+       <width>118</width>
        <height>24</height>
       </rect>
      </property>
@@ -590,8 +629,8 @@
      <property name="geometry">
       <rect>
        <x>1</x>
-       <y>339</y>
-       <width>115</width>
+       <y>279</y>
+       <width>118</width>
        <height>40</height>
       </rect>
      </property>
@@ -603,13 +642,35 @@
      <property name="geometry">
       <rect>
        <x>1</x>
-       <y>319</y>
-       <width>115</width>
+       <y>259</y>
+       <width>118</width>
        <height>20</height>
       </rect>
      </property>
      <property name="text">
       <string>Single read (mN)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="butSwitchManual">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>339</y>
+       <width>118</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>Switch to Manual
+Displacement Mode</string>
      </property>
     </widget>
    </widget>
@@ -622,6 +683,12 @@
       <height>20</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>120</width>
+      <height>20</height>
+     </size>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Settings&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
@@ -629,23 +696,452 @@
    <widget class="QLabel" name="buttonsLabel">
     <property name="geometry">
      <rect>
-      <x>720</x>
+      <x>721</x>
       <y>0</y>
       <width>120</width>
       <height>20</height>
      </rect>
     </property>
+    <property name="minimumSize">
+     <size>
+      <width>120</width>
+      <height>20</height>
+     </size>
+    </property>
     <property name="text">
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Buttons&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
+   <widget class="QWidget" name="MDM" native="true">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>121</x>
+      <y>0</y>
+      <width>598</width>
+      <height>400</height>
+     </rect>
+    </property>
+    <property name="minimumSize">
+     <size>
+      <width>598</width>
+      <height>400</height>
+     </size>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
+    <widget class="QLabel" name="labMDM">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>600</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Manual Displacement Mode&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignmentFlag::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="butReadForceMDM">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>319</y>
+       <width>238</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Read Force</string>
+     </property>
+    </widget>
+    <widget class="QGroupBox" name="extraSettingsBoxMDM">
+     <property name="geometry">
+      <rect>
+       <x>1</x>
+       <y>20</y>
+       <width>118</width>
+       <height>298</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="title">
+      <string>Extra Settings</string>
+     </property>
+     <widget class="QLabel" name="labelFilenameMDM">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>13</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Filename</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labStepSizeMDM">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>53</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Step Size (mm)</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labLineSkipsMDM">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>93</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Line Skips</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="butFileMDM">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>33</y>
+        <width>113</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>-</string>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QLabel" name="labLineReadsMDM">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>133</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Line Reads (take avg)</string>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="setLineReadsMDM">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>153</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>999999999</number>
+      </property>
+      <property name="value">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QSpinBox" name="setLineSkipsMDM">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>113</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="minimum">
+       <number>1</number>
+      </property>
+      <property name="maximum">
+       <number>999999999</number>
+      </property>
+      <property name="value">
+       <number>10</number>
+      </property>
+     </widget>
+     <widget class="QDoubleSpinBox" name="setStepSizeMDM">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>73</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="decimals">
+       <number>5</number>
+      </property>
+      <property name="minimum">
+       <double>0.000000000000000</double>
+      </property>
+      <property name="maximum">
+       <double>99.989999999999995</double>
+      </property>
+      <property name="singleStep">
+       <double>0.010000000000000</double>
+      </property>
+      <property name="value">
+       <double>0.050000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="yLabelLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>213</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>y-label</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="xLabel_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>273</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Displacement [mm]</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="yLabel_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>233</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Force [mN]</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="xLabelLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>253</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>x-label</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="title_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>193</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Manual Force Displacement Curve</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="titleLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>173</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Title</string>
+      </property>
+     </widget>
+    </widget>
+    <widget class="PlotWidget" name="graphMDM">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>20</y>
+       <width>477</width>
+       <height>298</height>
+      </rect>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Plain</enum>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="butSwitchDirectionMDM">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>1</x>
+       <y>319</y>
+       <width>118</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Switch Direction</string>
+     </property>
+    </widget>
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="geometry">
+      <rect>
+       <x>359</x>
+       <y>319</y>
+       <width>238</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <zorder>graphMDM</zorder>
+    <zorder>labMDM</zorder>
+    <zorder>butReadForceMDM</zorder>
+    <zorder>extraSettingsBoxMDM</zorder>
+    <zorder>butSwitchDirectionMDM</zorder>
+    <zorder>plainTextEdit</zorder>
+   </widget>
+   <zorder>settings</zorder>
+   <zorder>rightWidget</zorder>
+   <zorder>settingsLabel</zorder>
+   <zorder>buttonsLabel</zorder>
+   <zorder>centerGraph</zorder>
+   <zorder>MDM</zorder>
   </widget>
  </widget>
  <customwidgets>
   <customwidget>
    <class>PlotWidget</class>
    <extends>QGraphicsView</extends>
-   <header>pyqtgraph</header>
+   <header location="global">pyqtgraph</header>
   </customwidget>
  </customwidgets>
  <resources/>
