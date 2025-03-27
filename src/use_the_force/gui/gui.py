@@ -624,6 +624,7 @@ class UserInterface(QtWidgets.QMainWindow):
         self.readForceMDMToggle = False
         if self.switchDirectionMDMToggle:
             self.switchDirectionMDMToggle = False
+            self.butFileMDM()
             self.ui.butSwitchDirectionMDM.setText("Switch Direction")
         else:
             self.switchDirectionMDMToggle = True
