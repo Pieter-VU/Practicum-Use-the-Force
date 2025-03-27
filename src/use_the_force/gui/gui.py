@@ -7,6 +7,7 @@ import pyqtgraph as pg
 import threading
 import bisect
 import serial
+import re
 from serial.tools import list_ports
 from .main_ui import Ui_MainWindow
 from .error_ui import Ui_errorWindow
@@ -64,6 +65,8 @@ class UserInterface(QtWidgets.QMainWindow):
         self.singleReadForces: int = 10
         self.singleReadSkips: int = 10
         self.stepSizeMDM: float = 0.05
+        self.txtLogMDM: str = str()
+        self.reMDMMatch = re.compile(r"\[[A-Za-z0-9]+\]")
         self.data = [[], []]
         self.data2 = [[], []]
 
@@ -574,16 +577,49 @@ class UserInterface(QtWidgets.QMainWindow):
                 self.singleReadToggle = False
             else:
                 if self.readForceMDMToggle:
-                    a = len(str(self.stepSizeMDM).split(".")[-1:][0])
-                    self.data[0].append(round(self.data[0][-1]+self.stepSizeMDM, len(str(self.stepSizeMDM).split(".")[-1:][0])))
+                    self.data[0].append(round(self.data[0][-1]+self.stepSizeMDM, len(str(self.stepSizeMDM).split(".")[-1])))
                     self.data[1].append(self.singleReadForce)
+
+                    if re.search(self.reMDMMatch, self.ui.xLabel_2.text()) and  re.search(self.reMDMMatch, self.ui.yLabel_2.text()):
+                        xUnit = self.ui.xLabel_2.text().split("[")[1].split("]")
+                        yUnit = self.ui.yLabel_2.text().split("[")[1].split("]")
+                        if len(xUnit) > 0 and len(yUnit) > 0:
+                            self.txtLogMDM = self.txtLogMDM + f"\n{self.data[0][-1]} {xUnit[0]}, {self.data[1][-1]} {yUnit[0]}"
+                    else:
+                        self.txtLogMDM = self.txtLogMDM + f"\n{self.data[0][-1]}, {self.data[1][-1]}"
+                    self.ui.plainTextEdit.setPlainText(self.txtLogMDM)
+                    self.plainTextEditScrollbar = self.ui.plainTextEdit.verticalScrollBar()
+                    self.plainTextEditScrollbar.setValue(self.plainTextEditScrollbar.maximum())
+
                 elif self.switchDirectionMDMToggle:
                     self.data[1].append(self.singleReadForce)
                     self.readForceMDMToggle = True
+                    del self.txtLogMDM
+                    self.txtLogMDM = str()
+                    if re.search(self.reMDMMatch, self.ui.xLabel_2.text()) and  re.search(self.reMDMMatch, self.ui.yLabel_2.text()):
+                        xUnit = self.ui.xLabel_2.text().split("[")[1].split("]")
+                        yUnit = self.ui.yLabel_2.text().split("[")[1].split("]")
+                        if len(xUnit) > 0 and len(yUnit) > 0:
+                            self.txtLogMDM = self.txtLogMDM + f"{self.data[0][-1]} {xUnit[0]}, {self.data[1][-1]} {yUnit[0]}"
+                    else:
+                        self.txtLogMDM = self.txtLogMDM + f"{self.data[0][-1]}, {self.data[1][-1]}"
+                    self.ui.plainTextEdit.setPlainText(self.txtLogMDM)
+                    self.plainTextEditScrollbar = self.ui.plainTextEdit.verticalScrollBar()
+                    self.plainTextEditScrollbar.setValue(self.plainTextEditScrollbar.maximum())
                 else:
                     self.data[0].append(0.)
                     self.data[1].append(self.singleReadForce)
                     self.readForceMDMToggle = True
+                    if re.search(self.reMDMMatch, self.ui.xLabel_2.text()) and  re.search(self.reMDMMatch, self.ui.yLabel_2.text()):
+                        xUnit = self.ui.xLabel_2.text().split("[")[1].split("]")
+                        yUnit = self.ui.yLabel_2.text().split("[")[1].split("]")
+                        if len(xUnit) > 0 and len(yUnit) > 0:
+                            self.txtLogMDM = self.txtLogMDM + f"{self.data[0][-1]} {xUnit[0]}, {self.data[1][-1]} {yUnit[0]}"
+                    else:
+                        self.txtLogMDM = self.txtLogMDM + f"{self.data[0][-1]}, {self.data[1][-1]}"
+                    self.ui.plainTextEdit.setPlainText(self.txtLogMDM)
+                    self.plainTextEditScrollbar = self.ui.plainTextEdit.verticalScrollBar()
+                    self.plainTextEditScrollbar.setValue(self.plainTextEditScrollbar.maximum())
                 self.ui.butSwitchDirectionMDM.setEnabled(True)
 
                 self.measurementLog.writeLog([self.data[0][-1],self.data[1][-1]])
@@ -625,6 +661,9 @@ class UserInterface(QtWidgets.QMainWindow):
         if self.switchDirectionMDMToggle:
             self.switchDirectionMDMToggle = False
             self.butFileMDM()
+            del self.txtLogMDM
+            self.txtLogMDM = str()
+            self.ui.plainTextEdit.clear()
             self.ui.butSwitchDirectionMDM.setText("Switch Direction")
         else:
             self.switchDirectionMDMToggle = True
@@ -637,7 +676,10 @@ class UserInterface(QtWidgets.QMainWindow):
             self.measurementLog.createLogGUI()
 
             self.stepSizeMDM = -1*self.stepSizeMDM
-            self.switchDistance = self.data[0][-1]
+            if len(self.data[0]) > 0:
+                self.switchDistance = self.data[0][-1]
+            else:
+                self.switchDistance = 0.
 
             self.data2 = self.data
             del self.data
@@ -740,6 +782,14 @@ class UserInterface(QtWidgets.QMainWindow):
         - `else:` opens dialog box to select/ create a .csv file
         """
         if self.fileMDMOpen:
+            if not self.switchDirectionMDMToggle:
+                self.switchDirectionMDM()
+            self.switchDirectionMDMToggle = False
+            del self.txtLogMDM
+            self.txtLogMDM = str()
+            self.ui.plainTextEdit.clear()
+            self.ui.butSwitchDirectionMDM.setText("Switch Direction")
+
             self.fileMDMOpen = False
             self.ui.butFileMDM.setChecked(True)
             self.measurementLog.closeFile()
@@ -749,6 +799,7 @@ class UserInterface(QtWidgets.QMainWindow):
             self.ui.butSwitchManual.setEnabled(True)
             self.ui.butConnect.setEnabled(True)
             self.ui.butReadForceMDM.setEnabled(False)
+            self.ui.butSwitchDirectionMDM.setEnabled(False)
 
         else:
             self.filePath, _ = QtWidgets.QFileDialog.getSaveFileName(
@@ -891,8 +942,8 @@ class singleReadWorker(QObject, QRunnable):
                  for i in range(0, self.callerSelf.singleReadSkips)]
         forces = [self.callerSelf.sensor.ForceFix(self.callerSelf.sensor.GetReading()[
                                                   1]) for i in range(0, self.callerSelf.singleReadForces)]
-        self.callerSelf.singleReadForce = sum(
-            forces)/self.callerSelf.singleReadForces
+        self.callerSelf.singleReadForce = round(sum(
+            forces)/self.callerSelf.singleReadForces,8)
         self.endSignal.emit()
 
 
