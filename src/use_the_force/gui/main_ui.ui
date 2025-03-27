@@ -768,7 +768,7 @@ Displacement Mode</string>
        <x>1</x>
        <y>20</y>
        <width>118</width>
-       <height>258</height>
+       <height>298</height>
       </rect>
      </property>
      <property name="font">
@@ -954,7 +954,7 @@ Displacement Mode</string>
       <property name="geometry">
        <rect>
         <x>1</x>
-        <y>173</y>
+        <y>213</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -975,7 +975,7 @@ Displacement Mode</string>
       <property name="geometry">
        <rect>
         <x>1</x>
-        <y>233</y>
+        <y>273</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -996,7 +996,7 @@ Displacement Mode</string>
       <property name="geometry">
        <rect>
         <x>1</x>
-        <y>193</y>
+        <y>233</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -1014,7 +1014,7 @@ Displacement Mode</string>
       <property name="geometry">
        <rect>
         <x>1</x>
-        <y>213</y>
+        <y>253</y>
         <width>113</width>
         <height>20</height>
        </rect>
@@ -1026,6 +1026,45 @@ Displacement Mode</string>
       </property>
       <property name="text">
        <string>x-label</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="title_2">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>193</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Manual Force Displacement Curve</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="titleLabel_2">
+      <property name="geometry">
+       <rect>
+        <x>1</x>
+        <y>173</y>
+        <width>113</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Title</string>
       </property>
      </widget>
     </widget>
@@ -1087,12 +1126,12 @@ Displacement Mode</string>
     <zorder>textPreviousResultsMDM</zorder>
     <zorder>butSwitchDirectionMDM</zorder>
    </widget>
-   <zorder>MDM</zorder>
    <zorder>settings</zorder>
    <zorder>rightWidget</zorder>
    <zorder>settingsLabel</zorder>
    <zorder>buttonsLabel</zorder>
    <zorder>centerGraph</zorder>
+   <zorder>MDM</zorder>
   </widget>
  </widget>
  <customwidgets>
