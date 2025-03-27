@@ -17,8 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QDoubleSpinBox, QFrame, QGroupBox,
     QLabel, QLayout, QLineEdit, QMainWindow,
-    QPushButton, QScrollArea, QSizePolicy, QSlider,
-    QSpinBox, QTextBrowser, QToolBox, QWidget)
+    QPlainTextEdit, QPushButton, QScrollArea, QSizePolicy,
+    QSlider, QSpinBox, QToolBox, QWidget)
 
 from pyqtgraph import PlotWidget
 
@@ -300,27 +300,28 @@ class Ui_MainWindow(object):
         self.titleLabel_2.setObjectName(u"titleLabel_2")
         self.titleLabel_2.setGeometry(QRect(1, 173, 113, 20))
         self.titleLabel_2.setFont(font)
-        self.textPreviousResultsMDM = QTextBrowser(self.MDM)
-        self.textPreviousResultsMDM.setObjectName(u"textPreviousResultsMDM")
-        self.textPreviousResultsMDM.setGeometry(QRect(359, 319, 238, 80))
-        self.textPreviousResultsMDM.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
-        self.textPreviousResultsMDM.setOpenLinks(False)
         self.graphMDM = PlotWidget(self.MDM)
         self.graphMDM.setObjectName(u"graphMDM")
         self.graphMDM.setEnabled(True)
         self.graphMDM.setGeometry(QRect(120, 20, 477, 298))
         self.graphMDM.setFrameShape(QFrame.Shape.StyledPanel)
-        self.graphMDM.setFrameShadow(QFrame.Shadow.Sunken)
+        self.graphMDM.setFrameShadow(QFrame.Shadow.Plain)
         self.butSwitchDirectionMDM = QPushButton(self.MDM)
         self.butSwitchDirectionMDM.setObjectName(u"butSwitchDirectionMDM")
         self.butSwitchDirectionMDM.setEnabled(False)
         self.butSwitchDirectionMDM.setGeometry(QRect(1, 319, 118, 80))
+        self.plainTextEdit = QPlainTextEdit(self.MDM)
+        self.plainTextEdit.setObjectName(u"plainTextEdit")
+        self.plainTextEdit.setGeometry(QRect(359, 319, 238, 80))
+        self.plainTextEdit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOn)
+        self.plainTextEdit.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.plainTextEdit.setReadOnly(True)
         self.graphMDM.raise_()
         self.labMDM.raise_()
         self.butReadForceMDM.raise_()
         self.extraSettingsBoxMDM.raise_()
-        self.textPreviousResultsMDM.raise_()
         self.butSwitchDirectionMDM.raise_()
+        self.plainTextEdit.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.settings.raise_()
         self.rightWidget.raise_()

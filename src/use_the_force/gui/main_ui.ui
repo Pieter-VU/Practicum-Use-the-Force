@@ -1068,22 +1068,6 @@ Displacement Mode</string>
       </property>
      </widget>
     </widget>
-    <widget class="QTextBrowser" name="textPreviousResultsMDM">
-     <property name="geometry">
-      <rect>
-       <x>359</x>
-       <y>319</y>
-       <width>238</width>
-       <height>80</height>
-      </rect>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
-     </property>
-     <property name="openLinks">
-      <bool>false</bool>
-     </property>
-    </widget>
     <widget class="PlotWidget" name="graphMDM">
      <property name="enabled">
       <bool>true</bool>
@@ -1100,7 +1084,7 @@ Displacement Mode</string>
       <enum>QFrame::Shape::StyledPanel</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Shadow::Sunken</enum>
+      <enum>QFrame::Shadow::Plain</enum>
      </property>
     </widget>
     <widget class="QPushButton" name="butSwitchDirectionMDM">
@@ -1119,12 +1103,31 @@ Displacement Mode</string>
       <string>Switch Direction</string>
      </property>
     </widget>
+    <widget class="QPlainTextEdit" name="plainTextEdit">
+     <property name="geometry">
+      <rect>
+       <x>359</x>
+       <y>319</y>
+       <width>238</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
     <zorder>graphMDM</zorder>
     <zorder>labMDM</zorder>
     <zorder>butReadForceMDM</zorder>
     <zorder>extraSettingsBoxMDM</zorder>
-    <zorder>textPreviousResultsMDM</zorder>
     <zorder>butSwitchDirectionMDM</zorder>
+    <zorder>plainTextEdit</zorder>
    </widget>
    <zorder>settings</zorder>
    <zorder>rightWidget</zorder>
